@@ -1,3 +1,6 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04060c">
 <title>KBosmos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +21,7 @@
     color-scheme: dark;
   }
   /* pan-x pan-y: no pinch-to-zoom of the page (it pushes the control bar off-screen); panels still scroll. */
-  html, body { height: 100%; touch-action: pan-x pan-y; }
+  html, body { height: 100%; height: 100dvh; touch-action: pan-x pan-y; }
   body { background: var(--void); color: var(--ink); font-family: var(--f-ui); overflow: hidden; }
   #app { position: relative; width: 100%; height: 100%; }
   #scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
@@ -100,12 +103,12 @@
   .hud .ecl { font: 600 11px/1.3 var(--f-ui); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
   .hud .trip { font: 400 12px/1.4 var(--f-ui); color: var(--dim); max-width: 34ch; }
   .hud .trip b { font: 500 13px/1 var(--f-data); color: var(--ink); font-variant-numeric: tabular-nums; }
-  #eclPop, #galPop {
+  #eclPop, #galPop, #fictPop {
     position: absolute; left: 16px; bottom: 74px; width: 380px; max-width: calc(100% - 32px);
     max-height: calc(100% - 200px); overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding-block: 14px; display: grid; gap: 12px;
   }
-  #eclPop[hidden], #galPop[hidden] { display: none; }
+  #eclPop[hidden], #galPop[hidden], #fictPop[hidden] { display: none; }
   #orbPop {
     position: absolute; left: 50%; transform: translateX(-50%); z-index: 5; bottom: 74px; width: 250px; max-width: calc(100% - 32px);
     max-height: calc(100% - 200px); overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
@@ -158,19 +161,103 @@
   .why dl { border-top: 1px solid var(--line); padding-top: 10px; }
   .why dd .hit { color: var(--accent); }
   .why dd .miss { color: var(--dim); }
-  #geoBtn { justify-self: start; }
+  #geoBtn, #skyBtn { justify-self: start; }
+  /* What if… (fiction mode) */
+  .fsec { padding-inline: 16px; display: grid; gap: 8px; }
+  .fsec h3 { margin: 4px 0 0; font: 600 10.5px/1 var(--f-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+  .fsec p { margin: 0; font-size: 12.5px; line-height: 1.55; }
+  .fsec b { font-weight: 600; color: var(--accent); }
+  .fsec .legend { font-size: 11.5px; color: var(--dim); }
+  .fsec .warn { color: var(--accent); }
+  .fctl { display: grid; grid-template-columns: 64px 1fr 50px; align-items: center; gap: 8px; font-size: 12px; }
+  .fctl input[type=range] { width: 100%; accent-color: var(--accent); }
+  .fctl input:disabled { opacity: 0.35; }
+  .fctl output { font: 500 12px var(--f-data); text-align: right; font-variant-numeric: tabular-nums; }
+  #fSel { font: 500 12.5px var(--f-ui); color: var(--ink); background: rgba(236,230,214,0.06); border: 1px solid var(--line); border-radius: 5px; padding: 7px 8px; }
+  #fSel option { background: #14161d; }
+  .fev { list-style: none; margin: 0; padding: 0 16px; display: grid; gap: 5px; font-size: 12px; line-height: 1.45; }
+  .fev time { font: 500 11px var(--f-data); color: var(--dim); margin-right: 8px; }
+  .fimp { list-style: none; margin: 0; padding: 0; }
+  .fimp li { display: grid; grid-template-columns: 10px 1fr; gap: 3px 8px; align-items: center; padding: 7px 16px; border-bottom: 1px solid rgba(236,230,214,0.05); font-size: 12px; }
+  .fimp .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .fimp .nm { font-weight: 600; }
+  .fimp .st { grid-column: 2; color: var(--dim); line-height: 1.45; }
+  .tag { font: 600 9.5px/1 var(--f-ui); letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 5px; border-radius: 3px; margin-left: 8px; border: 1px solid; }
+  .tag.ok { color: #8d91a3; border-color: #3a3d48; } .tag.chg { color: #ffc861; border-color: #6b5a2f; } .tag.bad { color: #e07a62; border-color: #6b3428; }
+  tr.gone td { opacity: 0.4; }
+  button:disabled { opacity: 0.4; cursor: default; }
+  /* Watch from Earth: the sky view replaces space, so space-only overlays step aside. */
+  #skyCard {
+    position: absolute; top: 16px; right: 16px; width: 360px; max-width: calc(100% - 32px); display: grid; gap: 8px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding-block: 12px;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  #skyCard[hidden] { display: none; }
+  #skyCard p { margin: 0; padding-inline: 16px; font-size: 12.5px; line-height: 1.55; }
+  #skyCard b { font-weight: 600; color: var(--accent); }
+  #skyCard .legend { font-size: 11.5px; color: var(--dim); }
+  #skyCard .sizes { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+  body.sky #panel, body.sky #panelToggle, body.sky #labels, body.sky #hint { display: none !important; }
+  .skyLbl { position: absolute; left: 0; top: 0; pointer-events: none; font: 500 10px/1 var(--f-ui); letter-spacing: 0.06em; text-transform: uppercase; color: #ece6d6; text-shadow: 0 0 4px #000, 0 0 2px #000; white-space: nowrap; }
+  .skyLbl[hidden] { display: none; }
+  .eview { display: block; width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  .eview text { font: 500 10px var(--f-ui); fill: #8d91a3; }
+  .eview text.hi { fill: #ece6d6; }
+  .why details summary { font: 500 13px/1.4 var(--f-ui); cursor: pointer; }
+  .why details > * + * { margin-top: 8px; }
   .eicon { width: 10px; height: 10px; border-radius: 50%; }
   .eicon.solar { background: #ffc861; box-shadow: inset 3px -2px 0 0 #222; }
   .eicon.lunar { background: #b5472f; }
 
-  @media (max-width: 760px) {
-    #panel { top: auto; bottom: 128px; left: 16px; right: 16px; width: auto; max-height: 48%; }
-    #eclPop, #galPop, #orbPop { bottom: 128px; max-height: 60%; }
-    .hud { max-width: calc(100% - 120px); }
-    #hint { bottom: 118px; }
-    .sep { display: none; }
+  /* ---------- phones and tablets ----------
+     Desktop (mouse, wider than 760 px) matches none of the rules below and keeps the layout above unchanged.
+     --ctrl-h is the control bar's measured height (set from script), so sheets always sit just above it.
+     "Phone" = narrower than 760 px, or a touch screen under 500 px tall (a phone on its side). */
+  :root { --ctrl-h: 64px; --st: env(safe-area-inset-top, 0px); --sb: env(safe-area-inset-bottom, 0px); }
+  #moreBtn, #morePop[hidden] { display: none; }
+  #morePop {
+    position: absolute; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding-block: 12px;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: grid; gap: 10px; z-index: 6;
   }
-  @media (max-width: 760px) and (min-width: 0px) { .ctrl { width: calc(100% - 32px); } }
+  .moreGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-inline: 12px; }
+  .moreGrid button { width: 100%; }
+  @media (max-width: 760px), (pointer: coarse) and (max-height: 500px) {
+    .ctrl {
+      left: 8px; right: 8px; transform: none; max-width: none; bottom: calc(8px + var(--sb));
+      flex-wrap: nowrap; justify-content: space-between; gap: 4px; padding: 6px;
+    }
+    .ctrl .grp { gap: 4px; flex: 1; justify-content: space-between; }
+    #speedLbl { min-width: 0; flex: 0 1 110px; font-size: 12px; }
+    #moreBtn { display: inline-block; }
+    .ctrl .grp.empty { display: none; }
+    .sep { display: none; }
+    #panel, #eclPop, #galPop, #orbPop, #fictPop, #morePop, #skyCard {
+      top: auto; left: 8px; right: 8px; width: auto; max-width: none; transform: none;
+      bottom: calc(var(--ctrl-h) + 16px + var(--sb)); max-height: min(60%, calc(100% - var(--ctrl-h) - 110px - var(--st)));
+      overflow-y: auto; overscroll-behavior: contain;
+    }
+    .hud { top: calc(10px + var(--st)); left: 12px; max-width: calc(100% - 110px); }
+    .hud .date { font-size: 16px; }
+    .hud .trip { display: none; }
+    #panelToggle { top: calc(10px + var(--st)); right: 8px; }
+    #hint { bottom: calc(var(--ctrl-h) + 14px + var(--sb)); }
+    #skyCard p { font-size: 12px; }
+  }
+  /* Touch screens: finger-sized targets. */
+  @media (pointer: coarse) {
+    button { min-height: 44px; }
+    input[type=range] { min-height: 32px; }
+    tbody td { padding-block: 10px; }
+    .elist button { padding-block: 11px; }
+  }
+  /* Touch tablets: popovers and the side panel share the width instead of overlapping. */
+  @media (pointer: coarse) and (min-width: 761px) and (min-height: 501px) {
+    .ctrl { bottom: calc(16px + var(--sb)); }
+    #eclPop, #galPop, #fictPop { width: min(380px, 46vw); bottom: calc(var(--ctrl-h) + 24px + var(--sb)); max-height: calc(100% - var(--ctrl-h) - 140px); }
+    #orbPop { bottom: calc(var(--ctrl-h) + 24px + var(--sb)); }
+    #panel { width: min(340px, 44vw); top: calc(16px + var(--st)); max-height: calc(100% - var(--ctrl-h) - 60px); }
+    #morePop { left: 50%; transform: translateX(-50%); width: 320px; bottom: calc(var(--ctrl-h) + 24px + var(--sb)); }
+  }
 </style>
 
 <div id="app">
@@ -211,6 +298,22 @@
       <button id="nextLunar"><span class="k">Next lunar ▶</span><span class="v"></span></button>
     </div>
     <ul class="elist" id="eclList"></ul>
+    <details class="why" id="lineBox" open>
+      <summary>Lined up: why this kind of eclipse?</summary>
+      <button id="skyBtn" aria-pressed="false">Watch it from Earth</button>
+      <p class="legend" id="lineCap"></p>
+      <svg id="lineView" class="eview" viewBox="0 0 340 160" role="img" aria-label="The Sun and Moon, or the Moon and Earth's shadow, drawn to scale as seen from Earth"></svg>
+      <p id="lineWhy"></p>
+      <dl id="lineLive"></dl>
+      <p class="legend" id="sideCap"></p>
+      <svg id="sideView" class="eview" viewBox="0 0 340 150" role="img" aria-label="Side view of the shadow and where it falls"></svg>
+      <details>
+        <summary>All the kinds of eclipse</summary>
+        <p class="legend"><b>Total solar</b>: the line through the Sun and Moon hits Earth and the Moon is close enough to look bigger than the Sun, so its dark shadow reaches the ground. <b>Annular</b>: lined up just as well, but the Moon is farther away and looks smaller, so its dark shadow ends before the ground and a ring of Sun shows. <b>Hybrid</b>: borderline. Earth's curve brings the middle of the track about 6,000 km closer to the Moon, so it's total there and annular at the ends. <b>Partial solar</b>: the line misses Earth, and only the Moon's faint outer shadow touches it.</p>
+        <p class="legend"><b>Total lunar</b>: the whole Moon fits inside Earth's dark shadow, which is about 2½ Moons wide out there. It turns red from sunlight bent through Earth's air. <b>Partial lunar</b>: only part of the Moon enters the dark shadow. <b>Penumbral</b>: the Moon only crosses the faint outer shadow and dims slightly. A lunar eclipse can't be annular, because from the Moon, Earth always looks far bigger than the Sun.</p>
+        <p class="legend">Why sizes matter: the Moon is 400 times smaller than the Sun but about 400 times closer, so they look nearly the same size. Its distance changes between about 357,000 and 406,000 km, which tips the balance between total and annular.</p>
+      </details>
+    </details>
     <details class="why" open>
       <summary>Why isn't there an eclipse every month?</summary>
       <p>The Moon's orbit is tilted about 5° to Earth's orbit around the Sun. At most new and full moons the Moon passes a little above or below the Sun–Earth line, so the shadow misses: the Moon's shadow misses Earth, or Earth's shadow misses the Moon.</p>
@@ -221,6 +324,49 @@
     </details>
     <p class="fine">Times are the moment of greatest eclipse in UTC, computed with Meeus's method (good to a few minutes). The jump pauses time and centres on Earth and the Moon. Where on Earth each eclipse is visible isn't shown.</p>
   </section>
+
+  <section id="morePop" hidden aria-label="More controls">
+    <div class="ph"><span class="eyebrow">More</span><button id="moreClose">Close</button></div>
+    <div class="moreGrid" id="moreGrid"></div>
+  </section>
+
+  <section id="fictPop" hidden aria-label="What if: change the Solar System">
+    <div class="ph"><span class="eyebrow">What if… · fiction mode</span><button id="fictClose">Back to reality</button></div>
+    <div class="fsec">
+      <p>Every body now pulls on every other, starting from where they really are. Change something, then press <b>Play</b>: the change spreads through the whole system. <span id="fLag" class="warn"></span></p>
+      <h3>Try one</h3>
+      <div class="seg" id="fPresets">
+        <button data-p="star">Jupiter becomes a star</button>
+        <button data-p="nojup">No Jupiter</button>
+        <button data-p="earthmars">Earth in Mars's orbit</button>
+        <button data-p="moonclose">Moon twice as close</button>
+        <button data-p="stopmoon">Stop the Moon</button>
+        <button data-p="halfsun">Sun loses half its mass</button>
+        <button data-p="rogue">A star flies through</button>
+        <button data-p="nosun">No Sun</button>
+      </div>
+      <h3>Or change any body</h3>
+      <select id="fSel" aria-label="Body to change"></select>
+      <div class="fctl"><label for="fMass">Mass</label><input type="range" id="fMass" min="-2" max="3" step="0.01" value="0"><output id="fMassV">×1</output></div>
+      <div class="fctl"><label for="fDist">Distance</label><input type="range" id="fDist" min="-2" max="2" step="0.01" value="0"><output id="fDistV">×1</output></div>
+      <div class="fctl"><label for="fSpeed">Speed</label><input type="range" id="fSpeed" min="-6.64" max="1" step="0.01" value="0"><output id="fSpeedV">×1</output></div>
+      <div class="seg"><button id="fRev">Reverse its orbit</button><button id="fDel">Remove it</button><button id="fReset">Reset to reality</button></div>
+      <p class="legend">Distance is from whatever it orbits. Its moons come along, and its speed adjusts so the orbit keeps its shape (the Speed slider changes the shape). You can also drag a planet in the 3D view. Coloured lines: the new paths. Hollow dots and faint rings: where the planets really are.</p>
+    </div>
+    <div class="fsec"><h3>What happened</h3></div>
+    <ul class="fev" id="fEvents"></ul>
+    <div class="fsec"><h3>Impact on every body</h3></div>
+    <ul class="fimp" id="fImpact"></ul>
+  </section>
+
+  <section id="skyCard" hidden aria-label="Watching the eclipse from Earth">
+    <div class="ph"><span class="eyebrow" id="skyWhere">Watching from Earth</span><button id="skyClose">Back to space</button></div>
+    <p id="skyWhat"></p>
+    <p class="sizes" id="skySizes"></p>
+    <p class="legend" id="skyLegend"></p>
+  </section>
+  <div class="skyLbl" id="skyLblNear" hidden>Moon at its closest</div>
+  <div class="skyLbl" id="skyLblFar" hidden>Moon at its farthest</div>
 
   <section id="orbPop" hidden aria-label="Choose which orbits to show">
     <div class="ph"><span class="eyebrow">Orbits</span><button id="orbClose">Close</button></div>
@@ -265,6 +411,8 @@
       <button id="now" title="Jump to the current moment">Now</button>
       <button id="eclBtn" aria-expanded="false" aria-controls="eclPop" title="Jump to past and future eclipses">Eclipses</button>
       <button id="galBtnOpen" aria-expanded="false" aria-controls="galPop" title="How the solar system moves through the galaxy">Galaxy</button>
+      <button id="fictBtn" aria-pressed="false" aria-expanded="false" aria-controls="fictPop" title="Change the Solar System and see what every body does">What if…</button>
+      <button id="moreBtn" aria-expanded="false" aria-controls="morePop">More ▾</button>
     </div>
     <span class="sep"></span>
     <div class="grp">
@@ -350,10 +498,38 @@
     const r = Math.hypot(p[0], p[1], p[2]);
     return { p, r, k, M };
   }
-  // Low-precision geocentric Moon (ecliptic, km).
+  // Geocentric Moon (ecliptic J2000, km): the main terms of Meeus, "Astronomical Algorithms" ch. 47 (good to ~10″ and
+  // ~50 km). The eclipse views need that: the Moon is only 0.5° wide. The series gives longitudes for the equinox of
+  // date, so general precession is taken off to match the J2000 planets.
+  const MOON_LR = [ // D, M, M', F, Σl (1e-6°), Σr (m)
+    [0, 0, 1, 0, 6288774, -20905355], [2, 0, -1, 0, 1274027, -3699111], [2, 0, 0, 0, 658314, -2955968], [0, 0, 2, 0, 213618, -569925],
+    [0, 1, 0, 0, -185116, 48888], [0, 0, 0, 2, -114332, -3149], [2, 0, -2, 0, 58793, 246158], [2, -1, -1, 0, 57066, -152138],
+    [2, 0, 1, 0, 53322, -170733], [2, -1, 0, 0, 45758, -204586], [0, 1, -1, 0, -40923, -129620], [1, 0, 0, 0, -34720, 108743],
+    [0, 1, 1, 0, -30383, 104755], [2, 0, 0, -2, 15327, 10321], [0, 0, 1, 2, -12528, 0], [0, 0, 1, -2, 10980, 79661],
+    [4, 0, -1, 0, 10675, -34782], [0, 0, 3, 0, 10034, -23210], [4, 0, -2, 0, 8548, -21636], [2, 1, -1, 0, -7888, 24208],
+    [2, 1, 0, 0, -6766, 30824], [1, 0, -1, 0, -5163, -8379], [1, 1, 0, 0, 4987, -16675], [2, -1, 1, 0, 4036, -12831],
+    [2, 0, 2, 0, 3994, -10445], [4, 0, 0, 0, 3861, -11650], [2, 0, -3, 0, 3665, 14403], [0, 1, -2, 0, -2689, -7003],
+    [2, 0, -1, 2, -2602, 0], [2, -1, -2, 0, 2390, 10056], [1, 0, 1, 0, -2348, 6322], [2, -2, 0, 0, 2236, -9884],
+  ];
+  const MOON_B = [ // D, M, M', F, Σb (1e-6°)
+    [0, 0, 0, 1, 5128122], [0, 0, 1, 1, 280602], [0, 0, 1, -1, 277693], [2, 0, 0, -1, 173237], [2, 0, -1, 1, 55413],
+    [2, 0, -1, -1, 46271], [2, 0, 0, 1, 32573], [0, 0, 2, 1, 17198], [2, 0, 1, -1, 9266], [0, 0, 2, -1, 8822],
+    [2, -1, 0, -1, 8216], [2, 0, -2, -1, 4324], [2, 0, 1, 1, 4200], [2, 1, 0, -1, -3359], [2, -1, -1, 1, 2463],
+    [2, -1, 0, 1, 2211], [2, -1, -1, -1, 2065], [0, 1, -1, -1, -1870], [4, 0, -1, -1, 1828], [0, 1, 0, 1, -1794],
+  ];
+  const PREC = 1.3969713; // general precession in longitude, degrees per Julian century
   function moonGeo(d) {
-    const L = 218.316 + 13.176396 * d, M = (134.963 + 13.064993 * d) * DEG, F = (93.272 + 13.229350 * d) * DEG;
-    const lam = (L + 6.289 * Math.sin(M)) * DEG, bet = 5.128 * Math.sin(F) * DEG, dist = 385001 - 20905 * Math.cos(M);
+    const T = d / 36525, E = 1 - 0.002516 * T, s = Math.sin;
+    const Lp = 218.3164477 + 481267.88123421 * T, Lr = Lp * DEG;
+    const D = (297.8501921 + 445267.1114034 * T) * DEG, M = (357.5291092 + 35999.0502909 * T) * DEG;
+    const Mp = (134.9633964 + 477198.8675055 * T) * DEG, F = (93.2720950 + 483202.0175233 * T) * DEG;
+    const A1 = (119.75 + 131.849 * T) * DEG, A2 = (53.09 + 479264.290 * T) * DEG, A3 = (313.45 + 481266.484 * T) * DEG;
+    const ecc = b => b === 0 ? 1 : Math.abs(b) === 2 ? E * E : E; // terms with the Sun's anomaly shrink as Earth's orbit rounds out
+    let sl = 3958 * s(A1) + 1962 * s(Lr - F) + 318 * s(A2), sr = 0;
+    for (const [a, b, c, f, l, r] of MOON_LR) { const x = a * D + b * M + c * Mp + f * F, k = ecc(b); sl += l * k * s(x); sr += r * k * Math.cos(x); }
+    let sb = -2235 * s(Lr) + 382 * s(A3) + 175 * s(A1 - F) + 175 * s(A1 + F) + 127 * s(Lr - Mp) - 115 * s(Lr + Mp);
+    for (const [a, b, c, f, v] of MOON_B) sb += v * ecc(b) * s(a * D + b * M + c * Mp + f * F);
+    const lam = (Lp + sl / 1e6 - PREC * T) * DEG, bet = sb / 1e6 * DEG, dist = 385000.56 + sr / 1000;
     return { p: [dist * Math.cos(bet) * Math.cos(lam), dist * Math.cos(bet) * Math.sin(lam), dist * Math.sin(bet)], dist, lam, bet };
   }
   // Equatorial (J2000) unit vector for RA/Dec → ecliptic.
@@ -424,7 +600,7 @@
 
   // Moon's orbit: tilt to the ecliptic, and longitude of its ascending node (= L − F from moonGeo; regresses once per 18.6 yr).
   const MOON_INCL = 5.145;
-  const moonNode = d => norm360(125.044 - 0.0529539 * d);
+  const moonNode = d => norm360(125.0443527 - 0.0529538 * d - PREC * d / 36525);
   const SYNODIC_MS = 29.530588861 * 86400000, K0_MS = Date.UTC(2000, 0, 6, 18, 14);
   function nextPhase(ms, full) {
     for (let k = Math.floor((ms - K0_MS) / SYNODIC_MS) - 1 + (full ? 0.5 : 0); ; k++) {
@@ -451,7 +627,7 @@
   // ---------- three.js setup ----------
   const canvas = document.getElementById('scene');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, logarithmicDepthBuffer: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.matchMedia('(pointer: coarse)').matches ? 1.5 : 2)); // touch devices: 1.5 saves fill rate on dense phone screens
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#04060c');
   const camera = new THREE.PerspectiveCamera(50, 1, 0.01, 20000);
@@ -658,16 +834,29 @@
   const aniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
   const mapWaiters = {};
   window.orreryMap = (name, uri) => { const fn = mapWaiters[name]; delete mapWaiters[name]; if (fn) fn(uri); };
+  // Touch devices get the 1024 px maps from textures/js/sm/ (also built by .claude/build-maps.ps1): about a fifth of
+  // the download and GPU memory. They fall back to the full maps if a small one is missing; desktop always gets full.
+  const SMALL_MAPS = window.matchMedia('(pointer: coarse)').matches;
   function loadMap(name, apply) {
     mapWaiters[name] = uri => {
       const img = new Image();
-      img.onload = () => { const t = new THREE.Texture(img); t.anisotropy = aniso; t.needsUpdate = true; apply(t); };
+      img.onload = () => {
+        let src = img;
+        if (SMALL_MAPS && img.width > 2048) { // safety net for big maps on touch devices
+          const c = document.createElement('canvas'); c.width = 2048; c.height = Math.round(img.height * 2048 / img.width);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); src = c;
+        }
+        const t = new THREE.Texture(src); t.anisotropy = aniso; t.needsUpdate = true; apply(t);
+      };
       img.src = uri;
     };
-    const s = document.createElement('script');
-    s.src = 'textures/js/' + name + '.js'; s.async = true;
-    s.onerror = () => console.warn('Surface map not loaded: ' + name);
-    document.head.appendChild(s);
+    const add = small => {
+      const s = document.createElement('script');
+      s.src = 'textures/js/' + (small ? 'sm/' : '') + name + '.js'; s.async = true;
+      s.onerror = () => small ? add(false) : console.warn('Surface map not loaded: ' + name);
+      document.head.appendChild(s);
+    };
+    add(SMALL_MAPS);
   }
   for (const b of BODIES) loadMap(b.id, t => { b.mesh.material.map = t; b.mesh.material.needsUpdate = true; });
   loadMap('earth_clouds', t => {
@@ -867,6 +1056,13 @@
     geoLabel('To Sun', sunGrp, R * 1.4, 'sun'); geoLabel("Earth's shadow", sunGrp, -R * 1.4, 'shadow');
   }
 
+  // Sun–Earth line, shown while the Eclipses panel is open. At an eclipse the Moon sits right on it: between the Sun
+  // and Earth for a solar eclipse, beyond Earth for a lunar one. It brightens while an eclipse is under way.
+  const alignLine = new THREE.Line(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3)),
+    new THREE.LineBasicMaterial({ color: '#ffc861', transparent: true, opacity: 0.4 }));
+  alignLine.frustumCulled = false; alignLine.visible = false; scene.add(alignLine);
+  const alignEnd = new THREE.Vector3();
+
   // ---------- state ----------
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let simMs = Date.now();
@@ -878,27 +1074,35 @@
 
   function update(ms) {
     const jd = ms / 86400000 + 2440587.5, d = jd - J2000, T = d / 36525;
-    for (const b of BODIES) {
-      if (b.id === 'sun') { b.root.position.set(0, 0, 0); state.sun = { helio: [0, 0, 0], r: 0 }; }
-      else if (b.el) {
-        const h = heliocentric(b.el, T);
-        b.root.position.copy(eclToScene(h.p, distScale(h.r) / h.r));
-        state[b.id] = { helio: h.p, r: h.r, a: h.k.a, M: h.M };
+    if (fict.on) fictPlace(); // fiction mode: the N-body simulation places everything, moons included
+    else {
+      for (const b of BODIES) {
+        if (b.id === 'sun') { b.root.position.set(0, 0, 0); state.sun = { helio: [0, 0, 0], r: 0 }; }
+        else if (b.el) {
+          const h = heliocentric(b.el, T);
+          b.root.position.copy(eclToScene(h.p, distScale(h.r) / h.r));
+          state[b.id] = { helio: h.p, r: h.r, a: h.k.a, M: h.M };
+        }
+        b.root.scale.setScalar(sceneRadius(b));
       }
-      b.root.scale.setScalar(sceneRadius(b));
+      const m = moonGeo(d), e = state.earth;
+      byId.moon.root.position.copy(byId.earth.root.position).addScaledVector(eclToScene(m.p).normalize(), moonSceneDist());
+      const helioMoon = [e.helio[0] + m.p[0] / AU_KM, e.helio[1] + m.p[1] / AU_KM, e.helio[2] + m.p[2] / AU_KM];
+      state.moon = { helio: helioMoon, r: Math.hypot(...helioMoon), geo: m, d };
     }
-    const m = moonGeo(d), e = state.earth;
-    const mDir = eclToScene(m.p).normalize();
-    byId.moon.root.position.copy(byId.earth.root.position).addScaledVector(mDir, moonSceneDist());
-    const helioMoon = [e.helio[0] + m.p[0] / AU_KM, e.helio[1] + m.p[1] / AU_KM, e.helio[2] + m.p[2] / AU_KM];
-    state.moon = { helio: helioMoon, r: Math.hypot(...helioMoon), geo: m, d };
+    const m = state.moon.geo, e = state.earth, mDir = eclToScene(m.p).normalize();
     const node = moonNode(d) * DEG, sunLon = Math.atan2(-e.helio[1], -e.helio[0]);
-    if (moonRing) { moonRing.position.copy(byId.earth.root.position); moonRing.rotation.y = node; }
+    if (moonRing) { moonRing.position.copy(byId.earth.root.position); moonRing.rotation.y = node; if (fict.on) moonRing.visible = false; }
     geoGrp.position.copy(byId.earth.root.position); nodeGrp.rotation.y = node; sunGrp.rotation.y = sunLon;
     moonDot.position.copy(mDir).multiplyScalar(moonSceneDist());
     state.node = node; state.sunLon = sunLon;
+    if (alignLine.visible) {
+      const ep = byId.earth.root.position, ap = alignLine.geometry.attributes.position;
+      alignEnd.copy(ep).normalize().multiplyScalar(moonSceneDist() * 2).add(ep);
+      ap.setXYZ(1, alignEnd.x, alignEnd.y, alignEnd.z); ap.needsUpdate = true;
+    }
     for (const b of BODIES) b.spin.rotation.y = norm360(b.W0 + b.Wd * d + (b.mapLon0 || 0)) * DEG;
-    updateMoons(d);
+    if (!fict.on) updateMoons(d);
     state.d = d; state.T = T;
   }
 
@@ -909,6 +1113,7 @@
   }
   function select(id, top) {
     topView = !!top; byId.moon.nearMark.visible = topView;
+    if (fict.on && F.ids.includes(id) && F.alive[F.ids.indexOf(id)]) { $('fSel').value = id; fictSyncEditor(); }
     focusId = id; renderMoonBox(); loadMoonMaps(byId[id].isMoon ? byId[id].parent.id : id);
     controls.minDistance = byId[id].isMoon ? sceneRadius(byId[id]) * 1.5 : 0.3;
     trans = { t0: performance.now(), fromT: controls.target.clone(), fromC: camera.position.clone() };
@@ -967,13 +1172,29 @@
   let downXY = null;
   canvas.addEventListener('pointerdown', e => { downXY = [e.clientX, e.clientY]; });
   canvas.addEventListener('pointerup', e => {
-    if (!downXY || Math.hypot(e.clientX - downXY[0], e.clientY - downXY[1]) > 5) return;
+    const touch = e.pointerType === 'touch'; // fingers wobble, so a tap may move a little
+    if (skyOn || !downXY || Math.hypot(e.clientX - downXY[0], e.clientY - downXY[1]) > (touch ? 12 : 5)) return;
     const r = canvas.getBoundingClientRect();
     ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
     ray.setFromCamera(ndc, camera);
-    const hit = ray.intersectObjects(pickables, false)[0];
+    const hit = ray.intersectObjects(pickables, false).find(h => !byId[h.object.userData.id]?.gone);
     if (hit) select(hit.object.userData.id);
+    else if (e.pointerType !== 'mouse') { const id = nearestBody(e.clientX - r.left, e.clientY - r.top, 28); if (id) select(id); }
   });
+  // Touch: small planets are hard to hit, so a tap that misses picks the nearest body within maxPx on screen.
+  const pickV = new THREE.Vector3();
+  function nearestBody(x, y, maxPx) {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    let best = null, bd = maxPx;
+    const cands = [...BODIES.filter(b => !b.gone), ...Object.values(moonSystems).flatMap(s => s.moons.filter(m => !m.lbl.hidden).map(m => m.body))];
+    for (const b of cands) {
+      pickV.copy(b.root.position).project(camera);
+      if (pickV.z >= 1) continue;
+      const d = Math.hypot((pickV.x + 1) / 2 * w - x, (1 - pickV.y) / 2 * h - y);
+      if (d < bd) { bd = d; best = b.id; }
+    }
+    return best;
+  }
 
   // ---------- UI ----------
   const $ = id => document.getElementById(id);
@@ -986,6 +1207,7 @@
   function orbitalSpeed(id) {
     const s = state[id];
     if (id === 'sun') return 0;
+    if (fict.on) return s.vk; // simulated speed relative to the Sun
     if (id === 'moon') { const dist = s.geo.dist; return Math.sqrt(398600.4 * (2 / dist - 1 / 384748)); }
     const r = s.r * AU_KM, a = s.a * AU_KM; return Math.sqrt(GM_SUN * (2 / r - 1 / a));
   }
@@ -999,6 +1221,7 @@
   function renderRows() {
     rowsEl.innerHTML = BODIES.map(b => {
       const s = state[b.id];
+      if (b.gone) return `<tr data-id="${b.id}" class="gone"><td><span class="dot" style="background:${b.color}"></span>${b.name}</td><td>gone</td><td>—</td></tr>`;
       const sun = b.id === 'sun' ? '—' : fmtAU(s.r);
       const v = b.id === 'sun' ? '—' : orbitalSpeed(b.id).toFixed(1) + ' km/s';
       return `<tr data-id="${b.id}" class="${focusId === b.id ? 'on' : ''}"><td><span class="dot" style="background:${b.color}"></span>${b.name}</td><td>${sun}</td><td>${v}</td></tr>`;
@@ -1018,6 +1241,7 @@
   const detailEl = $('detail');
   function renderDetail() {
     const id = focusId || 'earth', b = byId[id], s = state[id];
+    if (b.gone) { detailEl.innerHTML = `<div><div class="kind">${b.kind}</div></div><h2>${b.name}</h2><p class="fine" style="padding:0">Gone in this what-if. See the What if… panel for what happened.</p>`; return; }
     if (b.isMoon) { renderMoonDetail(b); return; }
     const rot = 360 / Math.abs(b.Wd), retro = b.retro ?? b.Wd < 0;
     const rows = [];
@@ -1028,7 +1252,7 @@
       rows.push(['Sunlight travel time', fmtDur(s.r * 499.005 / 86400)]);
       const lon = norm360(Math.atan2(s.helio[1], s.helio[0]) / DEG);
       rows.push(['Heliocentric longitude', lon.toFixed(2) + '°']);
-      rows.push([id === 'moon' ? 'Orbit around Earth' : 'Year length', id === 'moon' ? '27.32 days' : fmtDur(Math.pow(s.a, 1.5) * 365.25636)]);
+      rows.push([id === 'moon' ? 'Orbit around Earth' : 'Year length', id === 'moon' ? (fict.on ? fmtDur(s.P) : '27.32 days') : s.a > 0 ? fmtDur(Math.pow(s.a, 1.5) * 365.25636 / Math.sqrt(fict.on ? F.gm[F.primary] / (GM_KM.sun * KM3S2) : 1)) : 'none: escaping']);
     }
     rows.push(['Sidereal day', fmtDur(rot) + (retro ? ' (retrograde)' : '')]);
     rows.push(['Axial tilt', b.obliq.toFixed(2) + '°']);
@@ -1036,7 +1260,7 @@
     if (moonSystems[id]) rows.push(['Moons shown', moonSystems[id].moons.map(m => m.name).join(', ')]);
     let extra = '';
     if (id === 'moon') { const ph = moonPhase(); rows.unshift(['Phase', `${ph.name}, ${(ph.illum * 100).toFixed(0)}% lit`]); }
-    if (id !== 'sun' && id !== 'moon') {
+    if (id !== 'sun' && id !== 'moon' && s.a > 0) {
       const frac = norm360(s.M / DEG) / 360;
       extra = `<dt>Since perihelion</dt><dd>${(frac * 100).toFixed(1)}% of orbit</dd><div class="bar"><i style="width:${(frac * 100).toFixed(1)}%"></i></div>`;
     }
@@ -1060,6 +1284,7 @@
   $('topBtn').addEventListener('click', () => {
     if (topView) { select('moon'); return; }
     if (explain) setExplain(false);
+    if (skyOn) setSky(false);
     select('earth', true);
     if (!reduced) speedIdx = 4; // 1 day/s: one lunar orbit in about 27 seconds
     paused = false; renderSpeed();
@@ -1122,6 +1347,7 @@
     $('mComp').setAttribute('aria-pressed', String(m === 'comp'));
     $('mTrue').setAttribute('aria-pressed', String(m === 'true'));
     update(simMs); buildOrbits(state.T);
+    if (fict.on) F.trails.forEach(trailDraw);
     if (focusId) select(focusId); else defaultView();
   }
   $('mComp').addEventListener('click', () => setMode('comp'));
@@ -1163,19 +1389,19 @@
   // Side panel: open on wide screens, closed on phones until asked for. The Bodies button reopens it.
   function setPanel(open) {
     $('panel').classList.toggle('open', open);
-    $('panelToggle').hidden = open && !window.matchMedia('(max-width: 760px)').matches;
+    $('panelToggle').hidden = open && !window.matchMedia('(max-width: 760px), (pointer: coarse) and (max-height: 500px)').matches;
     $('panelToggle').setAttribute('aria-expanded', String(open));
   }
   $('panelToggle').addEventListener('click', () => setPanel(!$('panel').classList.contains('open')));
   $('panelClose').addEventListener('click', () => setPanel(false));
-  setPanel(!window.matchMedia('(max-width: 760px)').matches);
+  setPanel(!window.matchMedia('(max-width: 760px), (pointer: coarse) and (max-height: 500px)').matches);
 
   // ---------- eclipse bookmarks ----------
   const eclDateFmt = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
   const eclLabel = e => `${e.type} ${e.solar ? 'solar' : 'lunar'}`;
   const eclWhen = e => `${eclDateFmt.format(new Date(e.ms))} · ${new Date(e.ms).toISOString().slice(11, 16)} UTC`;
   const SLACK = 60000; // step past the eclipse we're sitting on
-  const narrow = window.matchMedia('(max-width: 760px)');
+  const narrow = window.matchMedia('(max-width: 760px), (pointer: coarse) and (max-height: 500px)');
   const firstAfter = ms => { let lo = 0, hi = ECLIPSES.length; while (lo < hi) { const m = (lo + hi) >> 1; if (ECLIPSES[m].ms > ms) hi = m; else lo = m + 1; } return lo; };
   function findEcl(solar, step) {
     if (step > 0) { for (let i = firstAfter(simMs + SLACK); i < ECLIPSES.length; i++) if (ECLIPSES[i].solar === solar) return ECLIPSES[i]; }
@@ -1185,6 +1411,7 @@
   function gotoEclipse(e) {
     simMs = e.ms; paused = true; renderSpeed();
     update(simMs); select('earth');
+    if (skyOn) setSky(true); // stand where the new eclipse is central
     lastEclKey = null; renderEclipses(); renderWhy(); renderClock();
     if (narrow.matches) toggleEcl(false);
   }
@@ -1218,6 +1445,7 @@
     if (open && galOn) setGalaxy(false);
     if (open) toggleOrb(false);
     $('eclPop').hidden = !open; $('eclBtn').setAttribute('aria-expanded', String(open)); $('eclBtn').setAttribute('aria-pressed', String(open));
+    alignLine.visible = open && !explain;
     lastEclKey = null; renderEclipses(); renderWhy();
   }
   $('eclBtn').addEventListener('click', () => toggleEcl($('eclPop').hidden));
@@ -1243,9 +1471,303 @@
     }
     rows.push(['Eclipse needs', 'Moon within roughly 1°–1½° of the plane at new or full moon (the exact limit depends on distances)']);
     $('whyLive').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+    renderLine();
   }
+
+  // ---------- lined up: why this kind of eclipse? ----------
+  // Solar: the shadow axis is the line through the Sun's and Moon's centres. The view is from the spot on Earth nearest
+  // that line, so when the line hits Earth the discs are concentric and only their apparent sizes decide total or
+  // annular. Lunar: Earth's umbra and penumbra at the Moon's distance, enlarged 2% for the atmosphere (as Meeus does).
+  const R_SUN = 696000, R_MOON = 1737.4, R_EQ = 6378.14;
+  const vsub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], vlen = a => Math.hypot(...a);
+  const vdot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], vadd = (a, b, k) => [a[0] + b[0] * k, a[1] + b[1] * k, a[2] + b[2] * k];
+  const lonLat = a => [Math.atan2(a[1], a[0]), Math.asin(a[2] / vlen(a))];
+  function skyOffset(a, b) { // b's position on the sky relative to a, radians: x east, y ecliptic north
+    const [la, ba] = lonLat(a), [lb, bb] = lonLat(b);
+    return [Math.atan2(Math.sin(lb - la), Math.cos(lb - la)) * Math.cos(ba), bb - ba];
+  }
+  function lineUp() {
+    const M = state.moon.geo.p, e = state.earth.helio, S = [-e[0] * AU_KM, -e[1] * AU_KM, -e[2] * AU_KM];
+    if (vdot(M, S) > 0) { // Moon on the Sun's side of the sky: think solar
+      const MS = vsub(M, S), dMS = vlen(MS), u = MS.map(v => v / dMS);
+      const t = -vdot(M, u), P = vadd(M, u, t), g = vlen(P), h = Math.sqrt(Math.max(0, R_EQ * R_EQ - g * g));
+      const O = g < R_EQ ? vadd(P, u, -h) : P.map(v => v * R_EQ / g);
+      const so = vsub(S, O), mo = vsub(M, O), [dx, dy] = skyOffset(so, mo), sep = Math.hypot(dx, dy);
+      const sunR = Math.asin(R_SUN / vlen(so)), moonR = Math.asin(R_MOON / vlen(mo));
+      const type = sep < Math.abs(sunR - moonR) ? (moonR >= sunR ? 'Total' : 'Annular') : sep < sunR + moonR ? 'Partial' : null;
+      return { solar: true, O, sunR, moonR, dx, dy, sep, type, g, hit: g < R_EQ, L: dMS * R_MOON / (R_SUN - R_MOON), dGround: t - h, geoSep: Math.acos(vdot(M, S) / vlen(M) / vlen(S)) };
+    }
+    const dm = vlen(M), ds = vlen(S), [dx, dy] = skyOffset(S.map(v => -v), M), sep = Math.hypot(dx, dy);
+    const pm = Math.asin(R_EQ / dm), ps = Math.asin(R_EQ / ds), ss = Math.asin(R_SUN / ds), moonR = Math.asin(R_MOON / dm);
+    const umb = 1.02 * (pm + ps - ss), pen = 1.02 * (pm + ps + ss);
+    const type = sep + moonR < umb ? 'Total' : sep - moonR < umb ? 'Partial' : sep - moonR < pen ? 'Penumbral' : null;
+    return { solar: false, moonR, umb, pen, dx, dy, sep, type, dm };
+  }
+  const km = v => Math.round(v).toLocaleString() + ' km', deg = r => (r / DEG).toFixed(2) + '°';
+  const hit = s => `<span class="hit">${s}</span>`, miss = s => `<span class="miss">${s}</span>`;
+  // Small arrow at the edge of a view pointing to something outside it.
+  function edgeArrow(W, H, x, y, text) {
+    const cx = W / 2, cy = H / 2, a = Math.atan2(y - cy, x - cx), k = Math.min((W / 2 - 16) / Math.abs(Math.cos(a) || 1e-9), (H / 2 - 16) / Math.abs(Math.sin(a) || 1e-9));
+    const px = cx + Math.cos(a) * k, py = cy + Math.sin(a) * k;
+    return `<g transform="translate(${px.toFixed(1)} ${py.toFixed(1)}) rotate(${(a / DEG).toFixed(1)})"><path d="M6 0 L-5 -5 L-5 5 Z" fill="#c8c6c0"/></g>` +
+      `<text x="${cx}" y="${H - 8}" text-anchor="middle" class="hi">${text}</text>`;
+  }
+  function renderLine() {
+    if (!$('lineBox').open) return;
+    const z = lineUp(), W = 340, H = 160, cx = W / 2, cy = H / 2;
+    const i = firstAfter(simMs), cat = [ECLIPSES[i - 1], ECLIPSES[i]].find(e => e && e.solar === z.solar && Math.abs(e.ms - simMs) < e.half * 60000);
+    const pxd = z.solar ? 190 : 55, px = r => r / DEG * pxd, f = v => v.toFixed(1);
+    const mx = cx - px(z.dx), my = cy - px(z.dy), mr = px(z.moonR); // east is left, as when facing the sky
+    const away = Math.abs(mx - cx) > W / 2 + mr || Math.abs(my - cy) > H / 2 + mr;
+    let s = `<rect width="${W}" height="${H}" fill="#05060a"/>`, why, rows;
+    if (z.solar) {
+      const sr = px(z.sunR);
+      if (z.type === 'Total') s += `<defs><radialGradient id="kbCorona"><stop offset="0.45" stop-color="#f4f1ff" stop-opacity="0.9"/><stop offset="1" stop-color="#9fb4ff" stop-opacity="0"/></radialGradient></defs><circle cx="${cx}" cy="${cy}" r="${f(sr * 2.4)}" fill="url(#kbCorona)"/>`;
+      else s += `<circle cx="${cx}" cy="${cy}" r="${f(sr + 6)}" fill="#ffc861" opacity="0.13"/>`;
+      s += `<circle cx="${cx}" cy="${cy}" r="${f(sr)}" fill="#ffc861"/>`;
+      if (!away) s += `<circle cx="${f(mx)}" cy="${f(my)}" r="${f(mr)}" fill="#0d0e13"/>`;
+      else s += edgeArrow(W, H, mx, my, `Moon is ${(z.geoSep / DEG).toFixed(1)}° from the Sun`);
+      s += `<text x="8" y="16">Sun ${deg(2 * z.sunR)}</text><text x="8" y="30">Moon ${deg(2 * z.moonR)}</text><text x="${W - 8}" y="16" text-anchor="end">N ↑ · E ←</text>`;
+      $('lineCap').textContent = 'From the best spot on Earth right now (where the line through the Sun and Moon comes closest), to scale:';
+      const bigger = (z.moonR / z.sunR - 1) * 100, size = `the Moon looks ${Math.abs(bigger).toFixed(1)}% ${bigger >= 0 ? 'bigger' : 'smaller'} than the Sun`;
+      const diff = z.L - z.dGround, strip = km(2 * Math.abs(diff) * R_MOON / z.L);
+      if (!z.type) why = `<b>Not lined up.</b> The Moon is ${(z.geoSep / DEG).toFixed(1)}° from the Sun, so the line through them passes ${km(z.g)} from Earth's centre. Its shadow misses Earth completely.`;
+      else if (z.type === 'Partial') why = `<b>Partial: nearly in line, not quite.</b> The line through the Sun and Moon passes ${km(z.g)} from Earth's centre and misses Earth (radius ${km(R_EQ)}) by ${km(z.g - R_EQ)}. Only the Moon's faint outer shadow (penumbra) touches Earth, so everyone sees just a bite taken out of the Sun.`;
+      else if (cat?.type === 'Hybrid') why = `<b>Hybrid: right on the edge.</b> The line hits Earth, and ${size}. Its dark shadow is ${km(z.L)} long, almost exactly the distance to the ground. Where Earth bulges closest to the Moon, mid-track, the shadow just reaches (total). Near the ends of the track it falls short (annular).`;
+      else if (z.type === 'Total') why = `<b>Total: in line, and the Moon is close.</b> The line through the Sun and Moon hits Earth, and at ${km(z.dGround)} away ${size}. Its dark shadow (umbra) reaches the ground with ${km(diff)} to spare, so people in a strip about ${strip} wide see the Sun completely covered.`;
+      else why = `<b>Annular: perfectly in line, but the Moon is too far.</b> The line hits Earth, but at ${km(z.dGround)} away ${size}. Its dark shadow ends ${km(-diff)} short of the ground, so even exactly lined up, a ring of Sun shows around the Moon in a strip about ${strip} wide.`;
+      rows = [
+        ['Line through Sun and Moon', `passes ${km(z.g)} from Earth's centre · ${z.hit ? hit('hits Earth') : miss('misses Earth')}`],
+        ["Moon's dark shadow", `${km(z.L)} long · ${z.hit ? `ground is ${km(z.dGround)} away` : 'passes beside Earth'}`],
+        ['Best view right now', z.type ? hit(z.type + (z.type === 'Partial' ? ' eclipse, ' + Math.round(Math.min(1, (z.sunR + z.moonR - z.sep) / (2 * z.sunR)) * 100) + '% of the Sun\'s width covered' : ' eclipse')) : miss('No eclipse')],
+      ];
+    } else {
+      const ur = px(z.umb), pr = px(z.pen);
+      s += `<defs><clipPath id="kbMoonClip"><circle cx="${f(mx)}" cy="${f(my)}" r="${f(mr)}"/></clipPath></defs>`;
+      s += `<circle cx="${cx}" cy="${cy}" r="${f(pr)}" fill="#8d91a3" fill-opacity="0.05" stroke="#8d91a3" stroke-opacity="0.55" stroke-dasharray="3 3"/>`;
+      s += `<circle cx="${cx}" cy="${cy}" r="${f(ur)}" fill="#c0503a" fill-opacity="0.07" stroke="#c0503a" stroke-opacity="0.8"/>`;
+      if (!away) s += `<circle cx="${f(mx)}" cy="${f(my)}" r="${f(mr)}" fill="#d8d5cc"/><g clip-path="url(#kbMoonClip)"><circle cx="${cx}" cy="${cy}" r="${f(pr)}" fill="#000" fill-opacity="0.3"/><circle cx="${cx}" cy="${cy}" r="${f(ur)}" fill="#6b1f10" fill-opacity="0.9"/></g>`;
+      else s += edgeArrow(W, H, mx, my, `Moon is ${(z.sep / DEG).toFixed(1)}° from Earth's shadow`);
+      s += `<text x="${cx}" y="${f(cy - ur - 4)}" text-anchor="middle">umbra</text><text x="${cx}" y="${f(cy - pr - 4)}" text-anchor="middle">penumbra</text><text x="${W - 8}" y="16" text-anchor="end">N ↑ · E ←</text>`;
+      $('lineCap').textContent = "The Moon and Earth's shadow at the Moon's distance, seen from Earth, to scale:";
+      const off = km(z.sep * z.dm), umbW = km(2 * z.umb * z.dm);
+      if (!z.type) why = `<b>Not lined up.</b> The Moon is ${off} from the Sun–Earth line, which is more than Earth's whole shadow, so it stays fully sunlit.`;
+      else if (z.type === 'Penumbral') why = `<b>Penumbral: close, but off the line.</b> The Moon is ${off} from the Sun–Earth line, so it crosses only Earth's faint outer shadow (penumbra) and misses the dark one. From there, Earth covers just part of the Sun, so the Moon dims slightly, often too little to notice.`;
+      else if (z.type === 'Partial') why = `<b>Partial: nearly in line.</b> The Moon is ${off} from the Sun–Earth line, so only part of it dips into Earth's dark shadow (umbra, ${umbW} wide here). That part goes dark red-brown, and the rest stays in the penumbra.`;
+      else why = `<b>Total: in line.</b> The Moon is only ${off} from the Sun–Earth line, so all of it fits inside Earth's dark shadow, ${umbW} wide here (about ${(z.umb / z.moonR).toFixed(1)} Moons across). It turns red because sunlight bent through Earth's atmosphere still reaches it.`;
+      rows = [
+        ['Moon from Sun–Earth line', `${off} (${deg(z.sep)})`],
+        ["Earth's dark shadow here", `${umbW} wide · Moon ${km(2 * R_MOON)}`],
+        ['Seen from Earth', z.type ? hit(z.type + ' eclipse') : miss('No eclipse')],
+      ];
+    }
+    $('lineView').innerHTML = s;
+    $('lineWhy').innerHTML = why;
+    $('lineLive').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+    renderSide(z);
+  }
+  // Side view of the shadow. Distances along the line are squeezed in the middle (marked //); the part near the far
+  // body is to scale, so you can see where the shadow ends and what it touches. Cone angles are exaggerated.
+  function renderSide(z) {
+    const W = 340, H = 150, f = v => v.toFixed(1), clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+    let s = `<rect width="${W}" height="${H}" fill="#05060a"/>`;
+    if (z.solar) {
+      const K = 250, cy = 52, mx = 30, mr = 12, x0 = 238, R = R_EQ / K, h = Math.sqrt(Math.max(0, R_EQ * R_EQ - z.g * z.g)) / K;
+      const ex = x0 + h, ey = cy + Math.min(z.g / K, 95), tip = clamp(x0 + (z.L - z.dGround) / K, 112, W + 400);
+      const slope = mr / (tip - mx), a = (W - tip) * slope;
+      s += `<circle cx="${f(ex)}" cy="${f(ey)}" r="${f(R)}" fill="#1d4a78" stroke="#5b9bd5"/>`;
+      s += `<polygon points="${mx},${cy - mr} ${W},${cy - mr - 30} ${W},${cy + mr + 30} ${mx},${cy + mr}" fill="#000" fill-opacity="0.32"/>`;
+      if (tip < W) s += `<polygon points="${f(tip)},${cy} ${W},${f(cy - a)} ${W},${f(cy + a)}" fill="#ffc861" fill-opacity="0.28"/>`;
+      s += `<polygon points="${mx},${cy - mr} ${f(Math.min(tip, W))},${f(tip > W ? cy - (tip - W) * slope : cy)} ${f(Math.min(tip, W))},${f(tip > W ? cy + (tip - W) * slope : cy)} ${mx},${cy + mr}" fill="#000" stroke="#8d91a3" stroke-opacity="0.6"/>`;
+      s += `<line x1="${mx}" y1="${cy}" x2="${W}" y2="${cy}" stroke="#ffc861" stroke-opacity="0.55" stroke-dasharray="4 3"/>`;
+      s += `<circle cx="${mx}" cy="${cy}" r="${mr}" fill="#c8c6c0"/><path d="M95 ${cy + 9} L101 ${cy - 9} M101 ${cy + 9} L107 ${cy - 9}" stroke="#ece6d6" stroke-width="1.5"/>`;
+      s += `<text x="${mx}" y="${cy + mr + 13}" text-anchor="middle">Moon</text><text x="6" y="${H - 8}">Sunlight →</text>`;
+      s += `<text x="${f(clamp(ex, 30, W - 30))}" y="${f(Math.min(ey + R + 13, H - 22))}" text-anchor="middle">Earth</text>`;
+      if (tip <= W - 4) s += `<text x="${f(Math.min(tip, W - 4))}" y="${cy - 16}" text-anchor="${tip > W - 40 ? 'end' : 'middle'}" class="hi">shadow ends</text>`;
+      if (x0 - tip > 70) s += `<text x="${f((tip + x0) / 2)}" y="${cy - 8}" text-anchor="middle" class="hi">ring zone</text>`;
+      s += `<line x1="${W - 48}" y1="${H - 12}" x2="${W - 8}" y2="${H - 12}" stroke="#8d91a3"/><text x="${W - 28}" y="${H - 16}" text-anchor="middle">10,000 km</text>`;
+      $('sideCap').textContent = "Side view: the Moon's shadow cones and Earth. Dark: umbra (Sun fully hidden). Grey: penumbra (partly hidden). Gold: antumbra (ring of Sun). The shadow's end and Earth are to scale (the Moon's long trip, //, is squeezed).";
+    } else {
+      const K = 150, cy = 72, ex = 22, ER = R_EQ / K, mxp = 278, ur = z.umb * z.dm / K, pr = z.pen * z.dm / K, mr = R_MOON / K;
+      const my = cy - clamp(Math.sign(z.dy || 1) * z.sep * z.dm / K, -90, 90);
+      s += `<polygon points="${ex},${f(cy - ER)} ${W},${f(cy - pr - 6)} ${W},${f(cy + pr + 6)} ${ex},${f(cy + ER)}" fill="#8d91a3" fill-opacity="0.12"/>`;
+      s += `<polygon points="${ex},${f(cy - ER)} ${W},${f(cy - ur + 2)} ${W},${f(cy + ur - 2)} ${ex},${f(cy + ER)}" fill="#3a1208" fill-opacity="0.9" stroke="#c0503a" stroke-opacity="0.6"/>`;
+      s += `<line x1="0" y1="${cy}" x2="${W}" y2="${cy}" stroke="#ffc861" stroke-opacity="0.55" stroke-dasharray="4 3"/>`;
+      s += `<circle cx="${ex}" cy="${cy}" r="${f(ER)}" fill="#1d4a78" stroke="#5b9bd5"/><path d="M128 ${cy + 9} L134 ${cy - 9} M134 ${cy + 9} L140 ${cy - 9}" stroke="#ece6d6" stroke-width="1.5"/>`;
+      s += `<circle cx="${mxp}" cy="${f(my)}" r="${f(mr)}" fill="${z.type === 'Total' ? '#8a3a26' : '#d8d5cc'}" stroke="#ece6d6" stroke-opacity="0.5"/>`;
+      s += `<text x="${mxp}" y="${f(Math.min(my + mr + 12, H - 4))}" text-anchor="middle" class="hi">Moon</text><text x="${ex + 4}" y="${f(cy + ER + 12)}">Earth</text><text x="6" y="12">Sunlight →</text>`;
+      s += `<text x="200" y="${f(cy + 4)}" text-anchor="middle" fill="#e07a62">umbra</text><text x="200" y="${f(cy - ur - 6)}" text-anchor="middle">penumbra</text>`;
+      $('sideCap').textContent = "Side view: Earth's shadow and the Moon. Dark red: umbra (no direct sunlight). Grey: penumbra (some sunlight). Around the Moon it's to scale (the trip from Earth, //, is squeezed).";
+    }
+    $('sideView').innerHTML = s;
+  }
+  $('lineBox').addEventListener('toggle', renderLine);
+
+  // ---------- watch from Earth ----------
+  // The sky as one observer on Earth sees it, drawn instead of space: the Sun and Moon in their true directions and at
+  // their true apparent sizes. Solar: the observer is fixed to the ground (turning with Earth) at the spot where the
+  // eclipse is central at greatest eclipse, so playing time shows the Moon sliding across the Sun. Dashed circles show
+  // how big the Moon would look at its closest and farthest: it can only cover the Sun when it looks bigger than it.
+  // Lunar: from Earth's centre toward Earth's shadow, with the umbra and penumbra outlined and shaded onto the Moon.
+  let skyOn = false, skySolar = true, skyObs = null; // skyObs: observer in Earth's spin frame (null = Earth's centre)
+  const skyScene = new THREE.Scene(), skyCam = new THREE.PerspectiveCamera(2.2, 1, 10, 10000);
+  skyScene.background = new THREE.Color('#03050b');
+  const SKY_SUN = 4000, SKY_MOON = 2000; // display distances; sizes come from the true angles
+  function radialTex(stops, streaks) {
+    const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d');
+    const gr = g.createRadialGradient(256, 256, 0, 256, 256, 256);
+    for (const [o, col] of stops) gr.addColorStop(o, col);
+    g.fillStyle = gr; g.fillRect(0, 0, 512, 512);
+    if (streaks) { // coronal streamers, longer toward the Sun's equator
+      g.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 160; i++) {
+        const a = Math.random() * Math.PI * 2, len = 110 + Math.random() * 130 * (0.5 + 0.5 * Math.abs(Math.cos(a)));
+        g.strokeStyle = `rgba(230,236,255,${(0.03 + Math.random() * 0.05).toFixed(3)})`; g.lineWidth = 1 + Math.random() * 3;
+        g.beginPath(); g.moveTo(256 + Math.cos(a) * 70, 256 + Math.sin(a) * 70); g.lineTo(256 + Math.cos(a) * len, 256 + Math.sin(a) * len); g.stroke();
+      }
+    }
+    return new THREE.CanvasTexture(c);
+  }
+  // Painter's order (no depth): the Moon is always nearer than the Sun.
+  const skyNoDepth = (o, order) => { o.renderOrder = order; o.material.depthTest = false; o.material.depthWrite = false; skyScene.add(o); return o; };
+  const skyGlow = skyNoDepth(new THREE.Sprite(new THREE.SpriteMaterial({ map: radialTex([[0, 'rgba(255,244,214,1)'], [0.14, 'rgba(255,228,170,0.7)'], [0.4, 'rgba(255,210,140,0.18)'], [1, 'rgba(255,200,120,0)']]), transparent: true })), 0);
+  const skyCorona = skyNoDepth(new THREE.Sprite(new THREE.SpriteMaterial({ map: radialTex([[0, 'rgba(240,244,255,1)'], [0.27, 'rgba(225,232,255,0.85)'], [0.45, 'rgba(190,205,255,0.25)'], [1, 'rgba(160,180,255,0)']], true), transparent: true })), 1);
+  // The Sun's disc, darker toward the edge (limb darkening).
+  const skySun = skyNoDepth(new THREE.Mesh(new THREE.SphereGeometry(1, 64, 32), new THREE.ShaderMaterial({
+    vertexShader: 'varying vec3 vN; varying vec3 vV; void main() { vec4 mv = modelViewMatrix * vec4(position, 1.0); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
+    fragmentShader: 'varying vec3 vN; varying vec3 vV; void main() { float mu = max(dot(normalize(vN), normalize(vV)), 0.0); gl_FragColor = vec4(vec3(1.0, 0.96, 0.86) * (0.72 + 0.28 * pow(mu, 0.5)), 1.0); }',
+  })), 2);
+  // The Moon, with Earth's shadow shaded on (lunar eclipses): dimmer through the penumbra, dark red in the umbra.
+  const skyShadow = { uDir: { value: new THREE.Vector3() }, uUmb: { value: 0 }, uPen: { value: 0 }, uOn: { value: 0 } };
+  const skyMoonMat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true }); // transparent, so it sorts after the glow sprites
+  skyMoonMat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, skyShadow);
+    sh.vertexShader = 'varying vec3 vSkyPos;\n' + sh.vertexShader.replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvSkyPos = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    sh.fragmentShader = 'varying vec3 vSkyPos; uniform vec3 uDir; uniform float uUmb; uniform float uPen; uniform float uOn;\n' +
+      sh.fragmentShader.replace('#include <dithering_fragment>', `#include <dithering_fragment>
+      float a = length(normalize(vSkyPos) - uDir); // ≈ angle from the shadow's centre
+      vec3 lit = gl_FragColor.rgb * (1.0 - 0.6 * (1.0 - smoothstep(uUmb, uPen, a)));
+      lit = mix(lit, gl_FragColor.rgb * vec3(0.42, 0.13, 0.07), 1.0 - smoothstep(uUmb - 0.0003, uUmb + 0.0003, a));
+      gl_FragColor.rgb = mix(gl_FragColor.rgb, lit, uOn);`);
+  };
+  const skyMoon = skyNoDepth(new THREE.Mesh(new THREE.SphereGeometry(1, 64, 32), skyMoonMat), 3);
+  skyMoon.material.depthTest = true; // its own back faces still need hiding
+  skyMoon.material.depthWrite = true;
+  const skyLight = new THREE.DirectionalLight(0xffffff, 1.1); skyScene.add(skyLight, new THREE.AmbientLight(0xffffff, 0.03));
+  // Two dashed guide circles: the Moon's size at its closest and farthest (solar), or Earth's umbra and penumbra (lunar).
+  function skyRing() {
+    const pts = []; for (let i = 0; i <= 160; i++) { const a = i / 160 * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a), Math.sin(a), 0)); }
+    const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineDashedMaterial({ color: '#ffffff', transparent: true, opacity: 0.85, dashSize: 0.07, gapSize: 0.05 }));
+    l.computeLineDistances(); return skyNoDepth(l, 4);
+  }
+  const skyNear = skyRing(), skyFar = skyRing();
+  // Area of the overlap of two discs (radii r1, r2, centres d apart).
+  function overlapArea(r1, r2, d) {
+    if (d >= r1 + r2) return 0;
+    if (d <= Math.abs(r1 - r2)) return Math.PI * Math.min(r1, r2) ** 2;
+    return r1 * r1 * Math.acos((d * d + r1 * r1 - r2 * r2) / (2 * d * r1)) + r2 * r2 * Math.acos((d * d + r2 * r2 - r1 * r1) / (2 * d * r2))
+      - 0.5 * Math.sqrt((-d + r1 + r2) * (d + r1 - r2) * (d - r1 + r2) * (d + r1 + r2));
+  }
+  const SKY_DAY = new THREE.Color('#5d8fce'), SKY_NIGHT = new THREE.Color('#03050b'), skyV = new THREE.Vector3(), skyQ = new THREE.Matrix4();
+  function placeRing(ring, centre, r, lblEl, text, below) {
+    ring.position.copy(centre); ring.lookAt(0, 0, 0); ring.scale.setScalar(r); ring.visible = r > 0;
+    skyV.set(0, below ? -1 : 1, 0).applyQuaternion(ring.quaternion).multiplyScalar(r).add(centre).project(skyCam);
+    const w = canvas.clientWidth, h = canvas.clientHeight, on = r > 0 && skyV.z < 1 && Math.abs(skyV.x) < 0.95 && Math.abs(skyV.y) < 0.95;
+    lblEl.hidden = !on; lblEl.textContent = text;
+    if (on) lblEl.style.transform = `translate(${((skyV.x + 1) / 2 * w).toFixed(1)}px, ${((1 - skyV.y) / 2 * h).toFixed(1)}px) translate(-50%, ${below ? '60%' : '-150%'})`;
+  }
+  let skyTextKey = '';
+  function updateSky() {
+    const M = state.moon.geo.p, e = state.earth.helio, S = [-e[0] * AU_KM, -e[1] * AU_KM, -e[2] * AU_KM];
+    let O = [0, 0, 0];
+    if (skyObs) {
+      const sp = byId.earth.spin; sp.updateWorldMatrix(true, false);
+      const w = sp.localToWorld(skyObs.clone()).sub(byId.earth.root.position).normalize();
+      O = [w.x * R_EQ, -w.z * R_EQ, w.y * R_EQ];
+    }
+    const so = vsub(S, O), mo = vsub(M, O), dMo = vlen(mo), sunR = Math.asin(R_SUN / vlen(so)), moonR = Math.asin(R_MOON / dMo);
+    const sDir = eclToScene(so).normalize(), mDir = eclToScene(mo).normalize();
+    const sep = 2 * Math.asin(Math.min(1, mDir.distanceTo(sDir) / 2));
+    const look = skySolar ? sDir : sDir.clone().negate(), aspect = canvas.clientWidth / canvas.clientHeight, base = skySolar ? 2.2 : 4.2;
+    skyCam.fov = aspect < 1.3 ? base * 1.3 / Math.max(aspect, 0.65) : base; // tall phone screens: crop the sides rather than shrink the Sun skyCam.aspect = aspect; skyCam.updateProjectionMatrix();
+    skyCam.position.set(0, 0, 0); skyCam.up.set(0, 1, 0); skyCam.lookAt(look);
+    const sunPos = sDir.clone().multiplyScalar(SKY_SUN), rs = SKY_SUN * Math.tan(sunR);
+    skySun.position.copy(sunPos); skySun.scale.setScalar(rs);
+    skyGlow.position.copy(sunPos); skyGlow.scale.setScalar(rs * 9);
+    skyCorona.position.copy(sunPos); skyCorona.scale.setScalar(rs * 7.3);
+    skyMoon.position.copy(mDir).multiplyScalar(SKY_MOON); skyMoon.scale.setScalar(SKY_MOON * Math.tan(moonR));
+    // Near side toward us (map centre, local +X), north roughly up.
+    const xA = mDir.clone().negate(), yA = new THREE.Vector3(0, 1, 0).addScaledVector(xA, -xA.y).normalize();
+    skyMoon.quaternion.setFromRotationMatrix(skyQ.makeBasis(xA, yA, new THREE.Vector3().crossVectors(xA, yA)));
+    const map = byId.moon.mesh.material.map; if (skyMoonMat.map !== map) { skyMoonMat.map = map; skyMoonMat.needsUpdate = true; }
+    skyLight.position.copy(sDir);
+    const up = O[0] || O[1] || O[2] ? eclToScene(O).normalize() : null, sunUp = !up || up.dot(sDir) > 0;
+    let what, sizes, legend, where;
+    if (skySolar) {
+      const frac = overlapArea(sunR, moonR, sep) / (Math.PI * sunR * sunR), exposed = 1 - frac;
+      skyScene.background.copy(SKY_NIGHT).lerp(SKY_DAY, sunUp ? Math.pow(exposed, 0.5) : 0);
+      skyGlow.material.opacity = 0.9 * Math.pow(exposed, 0.6); skyCorona.material.opacity = Math.min(1, Math.max(0, 1 - exposed * 400));
+      skySun.visible = skyGlow.visible = skyCorona.visible = true; skyShadow.uOn.value = 0; skyMoonMat.color.setScalar(0.4); // unlit side, faint earthshine
+      // Guides centred on the Moon: its apparent size at perigee and apogee, seen from here.
+      const toward = vlen(M) - dMo, rAt = d => SKY_MOON * Math.tan(Math.asin(R_MOON / (d - toward)));
+      skyNear.material.color.set('#7fe0c0'); skyFar.material.color.set('#e07a62');
+      placeRing(skyNear, skyMoon.position, rAt(356400), $('skyLblNear'), 'Moon at its closest');
+      placeRing(skyFar, skyMoon.position, rAt(406700), $('skyLblFar'), 'Moon at its farthest', true);
+      const pct = (moonR / sunR - 1) * 100;
+      if (!sunUp) what = '<b>The Sun is below the horizon here</b>, so nobody here sees the eclipse at this moment. Press Play, or jump to another eclipse.';
+      else if (exposed <= 0) what = `<b>Total eclipse.</b> The Moon is ${km(dMo)} away, close enough to look ${pct.toFixed(1)}% bigger than the Sun, so it covers the Sun completely and the faint corona appears. It's bigger than the dashed "farthest" circle and near the "closest" one.`;
+      else if (sep < sunR - moonR) what = `<b>Annular: a ring of Sun.</b> The Moon is dead centre on the Sun, but it's ${km(dMo)} away and looks ${(-pct).toFixed(1)}% smaller, so a ring of Sun shows around it. At its closest (green dashed circle) it would cover the Sun completely.`;
+      else if (frac > 0) what = `<b>Partial: ${Math.round(frac * 100)}% of the Sun is covered.</b> From here the Moon isn't centred on the Sun. Right now it looks ${Math.abs(pct).toFixed(1)}% ${pct >= 0 ? 'bigger than the Sun, so where it is centred the eclipse is total' : 'smaller than the Sun, so even where it is centred a ring would show'}.`;
+      else what = `<b>No eclipse from here right now.</b> The Moon is ${(sep / DEG).toFixed(1)}° from the Sun.`;
+      sizes = `Sun ${deg(2 * sunR)} · Moon ${deg(2 * moonR)} across · Moon ${km(dMo)} away`;
+      legend = 'To scale, as you would see it from this spot on the ground (it turns with Earth). Dashed circles: how big the Moon looks at its closest (green) and farthest (red). It covers the Sun only when it looks bigger than the Sun. Time runs at 1 min/s here: press Play to watch the Moon cross.';
+      const loc = skyObs.clone().normalize(), lat = Math.asin(loc.y) / DEG, lon = Math.atan2(-loc.z, loc.x) / DEG;
+      where = `From ${Math.abs(lat).toFixed(1)}°${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lon).toFixed(1)}°${lon >= 0 ? 'E' : 'W'}`;
+    } else {
+      const ds = vlen(S), dm = vlen(M), pm = Math.asin(R_EQ / dm), ps = Math.asin(R_EQ / ds), ss = Math.asin(R_SUN / ds);
+      const umb = 1.02 * (pm + ps - ss), pen = 1.02 * (pm + ps + ss), sepS = 2 * Math.asin(Math.min(1, mDir.distanceTo(look) / 2));
+      skyScene.background.copy(SKY_NIGHT); skySun.visible = skyGlow.visible = skyCorona.visible = false; skyMoonMat.color.setScalar(1);
+      skyShadow.uDir.value.copy(look); skyShadow.uUmb.value = umb; skyShadow.uPen.value = pen; skyShadow.uOn.value = 1;
+      const c = look.clone().multiplyScalar(SKY_MOON);
+      skyNear.material.color.set('#e07a62'); skyFar.material.color.set('#8d91a3');
+      placeRing(skyNear, c, SKY_MOON * Math.tan(umb), $('skyLblNear'), "Earth's dark shadow", true);
+      placeRing(skyFar, c, SKY_MOON * Math.tan(pen), $('skyLblFar'), "Earth's faint shadow");
+      if (sepS + moonR < umb) what = "<b>Total lunar eclipse.</b> The whole Moon is inside Earth's dark shadow (red dashed circle). It still glows a dim red, from sunlight bent through Earth's atmosphere.";
+      else if (sepS - moonR < umb) what = "<b>Partial lunar eclipse.</b> Part of the Moon is inside Earth's dark shadow (red circle). The rest is only in the faint outer shadow.";
+      else if (sepS - moonR < pen) what = "<b>Penumbral lunar eclipse.</b> The Moon is only in Earth's faint outer shadow (between the circles), so it dims slightly.";
+      else what = "<b>No eclipse right now.</b> The Moon is outside Earth's shadow.";
+      sizes = `Moon ${deg(2 * moonR)} across · Earth's dark shadow ${deg(2 * umb)} across here`;
+      legend = 'To scale, looking from Earth toward Earth\'s shadow at the Moon\'s distance (seen the same from anywhere the Moon is up). Press Play to watch the Moon cross the shadow.';
+      where = 'From Earth (night side)';
+    }
+    const key = what + sizes;
+    if (key !== skyTextKey) { skyTextKey = key; $('skyWhat').innerHTML = what; $('skySizes').textContent = sizes; $('skyLegend').textContent = legend; $('skyWhere').textContent = where; }
+  }
+  function setSky(on) {
+    if (on && galOn) setGalaxy(false);
+    if (on && explain) setExplain(false);
+    skyOn = on; document.body.classList.toggle('sky', on); controls.enabled = !on;
+    $('skyCard').hidden = !on; $('skyBtn').setAttribute('aria-pressed', String(on));
+    $('skyBtn').textContent = on ? 'Back to space' : 'Watch it from Earth';
+    $('skyLblNear').hidden = $('skyLblFar').hidden = true; skyTextKey = '';
+    if (!on) return;
+    // Solar: stand where this eclipse is central at its greatest (else the best spot right now).
+    skySolar = lineUp().solar; skyObs = null;
+    if (skySolar) {
+      const i = firstAfter(simMs), cat = [ECLIPSES[i - 1], ECLIPSES[i]].find(e => e && e.solar && Math.abs(e.ms - simMs) < Math.max(e.half, 180) * 60000);
+      update(cat ? cat.ms : simMs);
+      const sp = byId.earth.spin; sp.updateWorldMatrix(true, false);
+      skyObs = sp.worldToLocal(byId.earth.root.position.clone().addScaledVector(eclToScene(lineUp().O).normalize(), sceneRadius(byId.earth)));
+      update(simMs);
+    }
+    speedIdx = 1; renderSpeed(); // 1 min/s: an eclipse plays out in a couple of minutes
+    if (narrow.matches) toggleEcl(false);
+  }
+  $('skyBtn').addEventListener('click', () => setSky(!skyOn));
+  $('skyClose').addEventListener('click', () => setSky(false));
   function setExplain(on) {
-    explain = on; geoGrp.visible = on;
+    if (on && skyOn) setSky(false);
+    explain = on; geoGrp.visible = on; alignLine.visible = !on && !$('eclPop').hidden;
     $('geoBtn').setAttribute('aria-pressed', String(on));
     $('geoBtn').textContent = on ? 'Hide the geometry' : 'Show the geometry';
     $('geoLegend').hidden = !on;
@@ -1335,6 +1857,7 @@
     if (on) {
       if (!$('eclPop').hidden) toggleEcl(false);
       if (explain) setExplain(false);
+      if (skyOn) setSky(false);
       galPrev = { speedIdx, paused, dir, focusId };
       speedIdx = 6; paused = false; dir = 1; renderSpeed();
       galD0 = state.d;
@@ -1395,6 +1918,7 @@
   // No real shadows in the scene, so darken/redden the Moon while it's in Earth's umbra.
   const MOON_WHITE = new THREE.Color(1, 1, 1), MOON_BLOOD = new THREE.Color('#8a3a26');
   function tintMoon() {
+    if (fict.on) { byId.moon.mesh.material.color.copy(MOON_WHITE); return; } // real eclipse times mean nothing in fiction
     const i = firstAfter(simMs), mins = e => Math.abs(e.ms - simMs) / 60000;
     const e = [ECLIPSES[i - 1], ECLIPSES[i]].find(e => e && !e.solar && mins(e) < e.umbHalf);
     let k = 0;
@@ -1403,9 +1927,598 @@
   }
   function renderEclNow() {
     const i = firstAfter(simMs), el = $('eclNow');
-    const cur = [ECLIPSES[i - 1], ECLIPSES[i]].find(e => e && Math.abs(e.ms - simMs) < e.half * 60000);
-    el.hidden = !cur;
+    const cur = !fict.on && [ECLIPSES[i - 1], ECLIPSES[i]].find(e => e && Math.abs(e.ms - simMs) < e.half * 60000);
+    el.hidden = !cur; alignLine.material.opacity = cur ? 0.9 : 0.4;
     if (cur) el.textContent = `● ${eclLabel(cur)} eclipse ${Math.abs(cur.ms - simMs) < SLACK ? '· greatest' : 'in progress'}`;
+  }
+
+  // ---------- fiction mode: "What if…" ----------
+  // Every body pulls on every other: Newtonian gravity between the Sun, the planets, Pluto, the Moon and the 20 other
+  // moons (plus an optional visiting star), integrated with a kick-drift-kick leapfrog in AU and days. The step
+  // shrinks with the tightest orbit or closest pass (`F.tdyn`), so close encounters stay accurate. It starts from the
+  // real positions and velocities at the moment it's switched on (velocities by central differences of the same
+  // formulas), so with nothing changed it tracks reality. After that only the simulation moves things, so a change to
+  // any body spreads to every other one. Bodies are drawn around whatever they're bound to now (`F.host`), so a moon
+  // that's lost or captured is shown where it really went.
+  const KM3S2 = 86400 * 86400 / AU_KM ** 3; // GM: km³/s² → AU³/day²
+  const GM_KM = { // planets without their moons (the moons are separate bodies)
+    sun: 132712440018, mercury: 22031.78, venus: 324858.59, earth: 398600.44, moon: 4902.80, mars: 42828.37, jupiter: 126686534,
+    saturn: 37931187, uranus: 5793939, neptune: 6836529, pluto: 869.6, phobos: 7.1e-4, deimos: 9.6e-5, io: 5959.9, europa: 3202.7,
+    ganymede: 9887.8, callisto: 7179.3, mimas: 2.50, enceladus: 7.21, tethys: 41.21, dione: 73.12, rhea: 153.9, titan: 8978.1,
+    iapetus: 120.5, miranda: 4.4, ariel: 83.5, umbriel: 85.1, titania: 228.2, oberon: 192.4, triton: 1427.6, charon: 106.1,
+  };
+  const FICT_MIN = Date.UTC(1800, 0, 1), FICT_MAX = Date.UTC(9999, 11, 31);
+  const FICT_BUDGET = window.matchMedia('(pointer: coarse)').matches ? 12 : 30; // ms of simulation per frame (phones have less CPU to spare)
+  const fict = { on: false };
+  let F = null;
+  // A visiting star, only used by the "A star flies through" scenario.
+  const rogue = { id: 'rogue', name: 'Visiting star', R: 450000, color: '#ff9a6b', root: new THREE.Mesh(new THREE.SphereGeometry(1, 32, 16), new THREE.MeshBasicMaterial({ color: '#ff9a6b' })) };
+  rogue.root.visible = false; scene.add(rogue.root);
+  rogue.lbl = document.createElement('div'); rogue.lbl.className = 'lbl'; rogue.lbl.textContent = rogue.name; rogue.lbl.hidden = true; labelsEl.appendChild(rogue.lbl);
+  const fictBody = id => id === 'rogue' ? rogue : byId[id];
+  // Physical position of a moon of another planet (km, ecliptic), from the same mean elements the display uses.
+  function moonKm(m, d) {
+    const M = (m.M0 + m.n * d) * DEG, u = m.w + M + 2 * m.e * Math.sin(M), r = m.a * (1 - m.e * Math.cos(M));
+    const cO = Math.cos(m.node), sO = Math.sin(m.node), ci = Math.cos(m.i), si = Math.sin(m.i), cu = Math.cos(u), su = Math.sin(u);
+    const q = new THREE.Vector3(cO * cu - sO * su * ci, su * si, -(sO * cu + cO * su * ci)).multiplyScalar(r).applyQuaternion(m.frame.quaternion);
+    return [q.x, -q.z, q.y]; // scene axes → ecliptic
+  }
+  // Real heliocentric positions (AU) of every body at ms. The JPL "Earth" is the Earth–Moon barycentre, so it's split.
+  function fictSnapshot(ms) {
+    const d = ms / 86400000 + 2440587.5 - J2000, T = d / 36525, P = { sun: [0, 0, 0] };
+    for (const b of BODIES) if (b.el) P[b.id] = heliocentric(b.el, T).p;
+    const g = moonGeo(d), k = GM_KM.moon / (GM_KM.earth + GM_KM.moon), emb = P.earth;
+    P.earth = emb.map((v, j) => v - g.p[j] / AU_KM * k); P.moon = P.earth.map((v, j) => v + g.p[j] / AU_KM);
+    for (const [pid, sys] of Object.entries(moonSystems)) for (const m of sys.moons) { const q = moonKm(m, d); P[m.body.id] = P[pid].map((v, j) => v + q[j] / AU_KM); }
+    return P;
+  }
+  function fictBuild() {
+    const ids = ['sun', ...BODIES.filter(b => b.el).map(b => b.id), 'moon', ...Object.values(moonSystems).flatMap(s => s.moons.map(m => m.body.id)), 'rogue'];
+    const n = ids.length, h = 0.002, P0 = fictSnapshot(simMs), Pm = fictSnapshot(simMs - h * 86400000), Pp = fictSnapshot(simMs + h * 86400000);
+    F = { n, ids, gm: new Float64Array(n), R: new Float64Array(n), x: new Float64Array(3 * n), v: new Float64Array(3 * n), a: new Float64Array(3 * n),
+      alive: new Uint8Array(n), light: new Uint8Array(n), steps: 0, mr: new Float64Array(3 * n), mv: new Float64Array(3 * n), ap: new Float64Array(3 * n), mlist: new Int16Array(n), day: 0, rocheSeen: new Set(), rochePending: [], host: new Int16Array(n).fill(-1), mult: ids.map(() => ({ mass: 1, dist: 1, speed: 1 })), events: [], trails: [], primary: 0, tdyn: 1, lag: false };
+    ids.forEach((id, i) => {
+      F.R[i] = fictBody(id).R / AU_KM;
+      if (id === 'rogue') return;
+      F.gm[i] = GM_KM[id] * KM3S2; F.alive[i] = 1;
+      for (let j = 0; j < 3; j++) { F.x[3 * i + j] = P0[id][j]; F.v[3 * i + j] = (Pp[id][j] - Pm[id][j]) / (2 * h); }
+    });
+    // Heliocentric → barycentric velocities (no net momentum), so the Sun gets its real wobble and everything else
+    // keeps its real velocity relative to the Sun.
+    const Mtot = F.gm.reduce((s, g) => s + g, 0);
+    for (let j = 0; j < 3; j++) { let p = 0; for (let i = 1; i < n; i++) p += F.gm[i] * F.v[3 * i + j]; for (let i = 0; i < n; i++) F.v[3 * i + j] -= p / Mtot; }
+    fictRefresh();
+    // Pairs already inside a Roche limit in reality (Phobos is, held together by its own strength) aren't news.
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) if (F.alive[i] && F.alive[j] && Math.hypot(F.x[3 * i] - F.x[3 * j], F.x[3 * i + 1] - F.x[3 * j + 1], F.x[3 * i + 2] - F.x[3 * j + 2]) < F.roche[i * n + j]) F.rocheSeen.add(i * n + j);
+    F.rochePending.length = 0;
+    F.base = ids.map((id, i) => F.alive[i] ? fictOrbit(i) : null); // reality, for comparison
+    F.prevHost = F.host.slice();
+    for (const t of trailGrp.children.slice()) { t.geometry.dispose(); trailGrp.remove(t); }
+    F.trails = ids.map((id, i) => fictTrail(fictBody(id).color));
+  }
+  // Light moons (under 0.5% of the planet they orbit) ride along with it: they're stepped relative to their planet
+  // with their own small steps (`fictMoons`), so the fastest moon doesn't force tiny steps on everything else. Their
+  // pull on the heavy bodies is left out (at most 0.02% of their planet's).
+  function fictClassify() {
+    fictHosts();
+    const { n, gm, host, alive, light } = F, p = F.primary;
+    for (let i = 0; i < n; i++) { const h = host[i]; light[i] = alive[i] && h >= 0 && h !== p && gm[i] < 0.005 * gm[h] ? 1 : 0; }
+  }
+  // Fluid Roche limit for each pair (AU): inside it the bigger body's tides would pull the smaller one apart.
+  // 2.44 × R_big × (ρ_big / ρ_small)^⅓, with density ∝ GM / R³. The simulation keeps bodies whole, so it's reported, not modelled.
+  function fictRoche() {
+    const { n, gm, R } = F; F.roche = new Float64Array(n * n);
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const [b, s] = gm[i] >= gm[j] ? [i, j] : [j, i];
+      if (gm[s] > 0) F.roche[i * n + j] = F.roche[j * n + i] = 2.44 * R[b] * Math.cbrt((gm[b] / R[b] ** 3) / (gm[s] / R[s] ** 3));
+    }
+  }
+  function fictRocheNote(i, j) {
+    const key = Math.min(i, j) * F.n + Math.max(i, j);
+    if (F.rocheSeen.has(key)) return;
+    F.rocheSeen.add(key); F.rochePending.push([i, j]);
+  }
+  const fictRefresh = () => { fictClassify(); fictRoche(); fictAccel(); };
+  // Accelerations among the heavy bodies (everything that isn't a light moon).
+  function fictAccel() {
+    const { n, x, a, gm, alive, R, light } = F; a.fill(0);
+    let t2 = Infinity, hit = null;
+    for (let i = 0; i < n; i++) {
+      if (!alive[i] || light[i]) continue;
+      const i3 = 3 * i;
+      for (let j = i + 1; j < n; j++) {
+        if (!alive[j] || light[j]) continue;
+        const j3 = 3 * j, dx = x[j3] - x[i3], dy = x[j3 + 1] - x[i3 + 1], dz = x[j3 + 2] - x[i3 + 2];
+        const r2 = dx * dx + dy * dy + dz * dz, r = Math.sqrt(r2), k = 1 / (r2 * r);
+        a[i3] += gm[j] * dx * k; a[i3 + 1] += gm[j] * dy * k; a[i3 + 2] += gm[j] * dz * k;
+        a[j3] -= gm[i] * dx * k; a[j3 + 1] -= gm[i] * dy * k; a[j3 + 2] -= gm[i] * dz * k;
+        const s = gm[i] + gm[j]; if (s > 0) { const t = r2 * r / s; if (t < t2) t2 = t; }
+        if (r < R[i] + R[j] && !hit) hit = [i, j];
+        if (r < F.roche[i * n + j]) fictRocheNote(i, j);
+      }
+    }
+    F.tdyn = Math.sqrt(t2);
+    return hit;
+  }
+  // One step of H days: kick-drift-kick for the heavy bodies, then each light moon relative to its planet.
+  // (Plain-number loops on purpose: this runs hundreds of thousands of times per simulated year.)
+  function fictStep(H) {
+    if ((F.steps++ & 7) === 0) { fictClassify(); fictAccel(); }
+    const { n, x, v, a, gm, alive, light, host, R } = F, mr = F.mr, mv = F.mv, ap = F.ap, mlist = F.mlist;
+    let nm = 0, mhit = null;
+    // Each light moon: its state relative to its planet, and the differential pull of everything else (tides from the
+    // Sun, other planets and moons), held fixed over the step.
+    for (let i = 0; i < n; i++) {
+      if (!light[i]) continue;
+      const h = host[i], i3 = 3 * i, h3 = 3 * h;
+      let ax = 0, ay = 0, az = 0;
+      for (let j = 0; j < n; j++) {
+        if (j === i || j === h || !alive[j]) continue;
+        const j3 = 3 * j, dx = x[j3] - x[i3], dy = x[j3 + 1] - x[i3 + 1], dz = x[j3 + 2] - x[i3 + 2], r2 = dx * dx + dy * dy + dz * dz, rm = Math.sqrt(r2);
+        if (rm < R[i] + R[j]) { mhit = mhit || [i, j]; continue; }
+        const km = gm[j] / (r2 * rm);
+        ax += km * dx; ay += km * dy; az += km * dz;
+        if (light[j]) continue; // a light moon pulls this moon, but not the planet
+        const ex = x[j3] - x[h3], ey = x[j3 + 1] - x[h3 + 1], ez = x[j3 + 2] - x[h3 + 2], e2 = ex * ex + ey * ey + ez * ez, kh = gm[j] / (e2 * Math.sqrt(e2));
+        ax -= kh * ex; ay -= kh * ey; az -= kh * ez;
+      }
+      const rx = x[i3] - x[h3], ry = x[i3 + 1] - x[h3 + 1], rz = x[i3 + 2] - x[h3 + 2], rr2 = rx * rx + ry * ry + rz * rz;
+      // Pulled hard by something else (say, flying past another planet)? Then it steps with the heavy bodies from now on.
+      if (Math.sqrt(ax * ax + ay * ay + az * az) > 0.05 * (gm[h] + gm[i]) / rr2) { light[i] = 0; continue; }
+      const k3 = 3 * nm;
+      mr[k3] = rx; mr[k3 + 1] = ry; mr[k3 + 2] = rz;
+      mv[k3] = v[i3] - v[h3]; mv[k3 + 1] = v[i3 + 1] - v[h3 + 1]; mv[k3 + 2] = v[i3 + 2] - v[h3 + 2];
+      ap[k3] = ax; ap[k3 + 1] = ay; ap[k3 + 2] = az; mlist[nm++] = i;
+    }
+    for (let k = 0; k < 3 * n; k++) { v[k] += a[k] * H / 2; x[k] += v[k] * H; }
+    const hit = fictAccel();
+    for (let k = 0; k < 3 * n; k++) v[k] += a[k] * H / 2;
+    const AH = Math.abs(H), s = Math.sign(H);
+    for (let q = 0; q < nm; q++) {
+      const i = mlist[q], h = host[i], mu = gm[h] + gm[i], k3 = 3 * q, crashR = R[i] + R[h], rocheR = F.roche[i * n + h];
+      let inRoche = false;
+      let rx = mr[k3], ry = mr[k3 + 1], rz = mr[k3 + 2], ux = mv[k3], uy = mv[k3 + 1], uz = mv[k3 + 2];
+      const px = ap[k3], py = ap[k3 + 1], pz = ap[k3 + 2];
+      let r2 = rx * rx + ry * ry + rz * rz, rq = Math.sqrt(r2), c = -mu / (r2 * rq), gx = c * rx + px, gy = c * ry + py, gz = c * rz + pz;
+      // Fixed substeps (an integer number per step, about 1/60 of an orbit each), so the moon's own leapfrog stays steady.
+      const nsub = Math.min(20000, Math.max(1, Math.ceil(AH / (0.1 * Math.sqrt(r2 * rq / mu))))), hs = H / nsub;
+      let crash = false;
+      for (let t = 0; t < nsub; t++) {
+        ux += gx * hs / 2; uy += gy * hs / 2; uz += gz * hs / 2;
+        rx += ux * hs; ry += uy * hs; rz += uz * hs;
+        r2 = rx * rx + ry * ry + rz * rz; rq = Math.sqrt(r2); c = -mu / (r2 * rq);
+        gx = c * rx + px; gy = c * ry + py; gz = c * rz + pz;
+        ux += gx * hs / 2; uy += gy * hs / 2; uz += gz * hs / 2;
+        if (rq < rocheR) inRoche = true;
+        if (rq < crashR) { crash = true; break; }
+      }
+      const i3 = 3 * i, h3 = 3 * h;
+      x[i3] = x[h3] + rx; x[i3 + 1] = x[h3 + 1] + ry; x[i3 + 2] = x[h3 + 2] + rz;
+      v[i3] = v[h3] + ux; v[i3 + 1] = v[h3 + 1] + uy; v[i3 + 2] = v[h3 + 2] + uz;
+      if (inRoche) fictRocheNote(i, h);
+      if (crash) mhit = mhit || [i, h];
+    }
+    if (hit) fictMerge(...hit);
+    else if (mhit && alive[mhit[0]] && alive[mhit[1]]) fictMerge(...mhit);
+    F.day += H; fictSample();
+    while (F.rochePending.length) {
+      const [i, j] = F.rochePending.shift(), [b, s] = F.gm[i] >= F.gm[j] ? [i, j] : [j, i];
+      fictEvent(`${fictName(s)} came inside ${fictName(b)}'s Roche limit (${km(F.roche[i * F.n + j] * AU_KM)} from its centre). In reality tides would tear it apart into rings here. The simulation keeps it in one piece.`);
+    }
+  }
+  function fictSample() {
+    const { x, trails } = F, p3 = 3 * F.primary;
+    for (let i = 0; i < F.n; i++) {
+      const t = trails[i];
+      if (!t.on || Math.abs(F.day - t.last) < t.every) continue;
+      t.au.push([x[3 * i] - x[p3], x[3 * i + 1] - x[p3 + 1], x[3 * i + 2] - x[p3 + 2]]);
+      if (t.au.length > FTRAIL_N) t.au.shift();
+      t.last = F.day; t.dirty = true;
+    }
+  }
+  // Advance by `days` (signed); returns how far it actually got (it stops after ~30 ms of work per frame). The step is
+  // a power of two of a day, so it stays the same from step to step, which keeps the leapfrog accurate over long runs.
+  function fictAdvance(days) {
+    let left = Math.abs(days), steps = 0;
+    const s = Math.sign(days), t0 = performance.now();
+    while (left > 1e-9 && (steps & 15 || performance.now() - t0 < FICT_BUDGET)) {
+      const h = Math.min(left, 2 ** Math.min(1, Math.floor(Math.log2(Math.max(2e-5, 0.05 * F.tdyn)))));
+      fictStep(h * s); left -= h; steps++;
+    }
+    F.lag = left > 1e-9;
+    return (Math.abs(days) - left) * s;
+  }
+  const fictName = i => fictBody(F.ids[i]).name;
+  function fictEvent(text) { F.events.unshift({ ms: simMs, text }); if (F.events.length > 40) F.events.pop(); fictEventsDirty = true; }
+  let fictEventsDirty = true;
+  function fictMerge(i, j) {
+    const { gm, v, alive } = F, [big, small] = gm[i] >= gm[j] ? [i, j] : [j, i], M = gm[big] + gm[small];
+    if (M > 0) for (let k = 0; k < 3; k++) v[3 * big + k] = (gm[big] * v[3 * big + k] + gm[small] * v[3 * small + k]) / M;
+    gm[big] = M; alive[small] = 0; v.fill(0, 3 * small, 3 * small + 3);
+    fictEvent(`${fictName(small)} ${gm[big] > 1e-6 ? 'fell into' : 'crashed into'} ${fictName(big)}`);
+    fictRefresh();
+  }
+  const fictPrimary = () => { let p = -1; for (let i = 0; i < F.n; i++) if (F.alive[i] && (p < 0 || F.gm[i] > F.gm[p])) p = i; return p; };
+  // What each body is bound to: the closest more massive body it's gravitationally bound to, inside that body's
+  // Hill sphere (its zone of control against the primary). Otherwise the primary (the Sun, unless it's gone).
+  function fictHosts() {
+    const { n, gm, x, v, alive, host } = F, p = F.primary = fictPrimary();
+    for (let i = 0; i < n; i++) {
+      host[i] = -1;
+      if (!alive[i] || i === p) continue;
+      let best = p, bestR = Infinity;
+      for (let j = 0; j < n; j++) {
+        if (j === i || j === p || !alive[j] || gm[j] <= gm[i]) continue;
+        const dx = x[3 * i] - x[3 * j], dy = x[3 * i + 1] - x[3 * j + 1], dz = x[3 * i + 2] - x[3 * j + 2], r = Math.hypot(dx, dy, dz);
+        const dv2 = (v[3 * i] - v[3 * j]) ** 2 + (v[3 * i + 1] - v[3 * j + 1]) ** 2 + (v[3 * i + 2] - v[3 * j + 2]) ** 2;
+        if (dv2 / 2 - (gm[i] + gm[j]) / r >= 0 || r >= bestR) continue;
+        const dp = Math.hypot(x[3 * j] - x[3 * p], x[3 * j + 1] - x[3 * p + 1], x[3 * j + 2] - x[3 * p + 2]);
+        if (r < dp * Math.cbrt(gm[j] / (3 * gm[p]))) { best = j; bestR = r; }
+      }
+      host[i] = best;
+    }
+  }
+  // Orbit of body i around what it's bound to: osculating a, e, period (days), mean anomaly, distance, speed.
+  function fictOrbit(i, hostIdx) {
+    const h = hostIdx ?? F.host[i], { x, v, gm } = F;
+    if (h < 0) return { host: -1 };
+    const r = [0, 1, 2].map(k => x[3 * i + k] - x[3 * h + k]), u = [0, 1, 2].map(k => v[3 * i + k] - v[3 * h + k]);
+    const mu = gm[i] + gm[h], rr = Math.hypot(...r), v2 = u[0] ** 2 + u[1] ** 2 + u[2] ** 2, a = 1 / (2 / rr - v2 / mu);
+    const hv = [r[1] * u[2] - r[2] * u[1], r[2] * u[0] - r[0] * u[2], r[0] * u[1] - r[1] * u[0]];
+    const ev = [0, 1, 2].map(k => (u[(k + 1) % 3] * hv[(k + 2) % 3] - u[(k + 2) % 3] * hv[(k + 1) % 3]) / mu - r[k] / rr), e = Math.hypot(...ev);
+    let M = 0;
+    if (a > 0 && e < 1) { const E = Math.atan2(vdot(r, u) / Math.sqrt(mu * a), 1 - rr / a); M = E - e * Math.sin(E); }
+    return { host: h, a, e, P: a > 0 ? 2 * Math.PI * Math.sqrt(a ** 3 / mu) : Infinity, M, r: rr, vk: Math.sqrt(v2) * AU_KM / 86400 };
+  }
+  // ----- drawing the simulation -----
+  const trailGrp = new THREE.Group(); scene.add(trailGrp);
+  const FTRAIL_N = 700;
+  function fictTrail(color) {
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(FTRAIL_N * 3), 3)); g.setDrawRange(0, 0);
+    const line = new THREE.Line(g, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.8 })); line.frustumCulled = false; trailGrp.add(line);
+    return { line, au: [], last: null, on: false, every: 1, dirty: false };
+  }
+  function trailDraw(t) {
+    const p = t.line.geometry.attributes.position;
+    t.au.forEach((q, k) => { const r = Math.hypot(...q), s = r > 0 ? eclToScene(q, distScale(r) / r) : new THREE.Vector3(); p.setXYZ(k, s.x, s.y, s.z); });
+    p.needsUpdate = true; t.line.geometry.setDrawRange(0, t.au.length);
+  }
+  const fictClearTrail = i => { const t = F.trails[i]; t.au = []; t.last = null; trailDraw(t); };
+  // Hollow dots: where the planets really are now, for comparison.
+  function ringTex() {
+    const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
+    g.strokeStyle = '#fff'; g.lineWidth = 7; g.beginPath(); g.arc(32, 32, 24, 0, Math.PI * 2); g.stroke();
+    return new THREE.CanvasTexture(c);
+  }
+  const GHOSTS = BODIES.filter(b => b.el);
+  const ghostGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(GHOSTS.length * 3), 3))
+    .setAttribute('color', new THREE.BufferAttribute(new Float32Array(GHOSTS.flatMap(b => new THREE.Color(b.color).toArray())), 3));
+  const ghosts = new THREE.Points(ghostGeo, new THREE.PointsMaterial({ size: 13, sizeAttenuation: false, map: ringTex(), vertexColors: true, transparent: true, opacity: 0.75, depthTest: false }));
+  ghosts.visible = false; ghosts.frustumCulled = false; scene.add(ghosts);
+  // How far from its host a bound body is drawn: our Moon as usual, moons as in their systems, planets around a star by the Sun's rule.
+  function hostDisplay(h, km) {
+    const b = fictBody(F.ids[h]);
+    if (F.gm[h] > 1e-6) return distScale(km / AU_KM); // a star
+    if (b.id === 'earth') return moonSceneDist() * km / 384400;
+    return sceneRadius(b) * moonDist(km / b.R);
+  }
+  const fictSceneR = b => b === rogue ? (mode === 'comp' ? 2.2 : sceneRadius(byId.sun) * 0.8) : sceneRadius(b);
+  function fictPlace() {
+    fictHosts();
+    const { n, x, alive, host, ids } = F, p = F.primary, pos = new Array(n), o = p >= 0 ? [x[3 * p], x[3 * p + 1], x[3 * p + 2]] : [0, 0, 0];
+    const rel = i => [x[3 * i] - o[0], x[3 * i + 1] - o[1], x[3 * i + 2] - o[2]];
+    const place = (i, depth = 0) => {
+      if (pos[i]) return pos[i];
+      const h = host[i];
+      if (i === p || h === p || h < 0 || depth > 4) { const q = rel(i), r = Math.hypot(...q); pos[i] = r > 0 ? eclToScene(q, distScale(r) / r) : new THREE.Vector3(); }
+      else {
+        const hp = place(h, depth + 1), d = [0, 1, 2].map(k => (x[3 * i + k] - x[3 * h + k]) * AU_KM), dk = Math.hypot(...d);
+        pos[i] = hp.clone().add(eclToScene(d).normalize().multiplyScalar(hostDisplay(h, dk)));
+      }
+      return pos[i];
+    };
+    for (let i = 0; i < n; i++) if (alive[i]) place(i);
+
+    for (let i = 0; i < n; i++) {
+      const id = ids[i], b = fictBody(id), live = !!alive[i];
+      b.gone = !live;
+      if (b === rogue) { rogue.root.visible = live; if (live) { rogue.root.position.copy(pos[i]); rogue.root.scale.setScalar(fictSceneR(rogue)); } }
+      else if (b.isMoon) {
+        const m = b.m, sys = moonSystems[b.parent.id];
+        m.holder.visible = live; m.ring.visible = false;
+        if (live) {
+          sys.grp.position.copy(b.parent.root.position); sys.grp.scale.setScalar(sceneRadius(b.parent)); sys.grp.updateMatrixWorld(true);
+          const lp = m.frame.worldToLocal(pos[i].clone());
+          m.holder.position.copy(lp); m.holder.rotation.y = Math.atan2(lp.z, -lp.x);
+          m.mesh.scale.setScalar(moonSize(m, b.parent)); b.root.position.copy(pos[i]);
+        }
+      } else {
+        b.root.visible = live;
+        if (live) { b.root.position.copy(pos[i]); b.root.scale.setScalar(sceneRadius(b)); }
+        const q = rel(i), o2 = live && i !== p ? fictOrbit(i, p) : { a: 0, M: 0, vk: 0 };
+        state[id] = { helio: q, r: Math.hypot(...q), a: o2.a, M: o2.M, vk: o2.vk };
+      }
+      // Trails for bodies going round the primary: one point every 1/250 of their current orbit, recorded inside the
+      // simulation steps (`fictSample`) so fast inner planets get smooth curves even when a frame covers days.
+      const t = F.trails[i];
+      t.on = live && i !== p && host[i] === p;
+      if (t.on) {
+        const ob = fictOrbit(i, p); t.every = Math.min(400, Math.max(0.05, (isFinite(ob.P) ? ob.P : 2000) / 250));
+        if (t.last === null) { t.au.push(rel(i)); t.last = F.day; t.dirty = true; }
+        if (t.dirty) { t.dirty = false; trailDraw(t); }
+      } else if (t.au.length) fictClearTrail(i);
+    }
+    // Our Moon relative to Earth, for the panel (phase, distance).
+    const ie = ids.indexOf('earth'), im = ids.indexOf('moon');
+    const gp = [0, 1, 2].map(k => (x[3 * im + k] - x[3 * ie + k]) * AU_KM), dist = Math.hypot(...gp);
+    state.moon.geo = { p: gp, dist, lam: Math.atan2(gp[1], gp[0]), bet: Math.asin(gp[2] / dist) };
+    const om = fictOrbit(im, ie); state.moon.P = om.P; state.moon.vk = om.vk; // around Earth
+    // Where the planets really are.
+    const T = ((simMs / 86400000 + 2440587.5) - J2000) / 36525, gpa = ghostGeo.attributes.position;
+    GHOSTS.forEach((b, k) => { const h = heliocentric(b.el, T); const s = eclToScene(h.p, distScale(h.r) / h.r); gpa.setXYZ(k, s.x, s.y, s.z); });
+    gpa.needsUpdate = true;
+  }
+  // ----- switching fiction mode on and off -----
+  function setFiction(on) {
+    if (on === fict.on) { if (on) toggleFictPop(true); return; }
+    if (on) {
+      if (galOn) setGalaxy(false);
+      if (skyOn) setSky(false);
+      if (explain) setExplain(false);
+      if (!$('eclPop').hidden) toggleEcl(false);
+      fict.on = true; fictBuild();
+      paused = true; speedIdx = 6; renderSpeed();
+    } else {
+      fict.on = false;
+      for (const t of trailGrp.children.slice()) { t.geometry.dispose(); trailGrp.remove(t); }
+      rogue.root.visible = false; rogue.lbl.hidden = true;
+      for (const b of Object.values(byId)) { b.gone = false; if (!b.isMoon) b.root.visible = true; else b.m.holder.visible = true; }
+      simMs = Math.min(MAX_MS, Math.max(MIN_MS, simMs));
+      applyOrbits();
+    }
+    for (const id of ['eclBtn', 'galBtnOpen', 'now']) $(id).disabled = on;
+    ghosts.visible = on;
+    for (const c of orbitGroup.children) c.traverse(o => { if (o.material) { o.material.userData.op ??= o.material.opacity; o.material.opacity = o.material.userData.op * (on ? 0.35 : 1); } });
+    $('fictBtn').setAttribute('aria-pressed', String(on));
+    toggleFictPop(on);
+    update(simMs); fictEventsDirty = true; renderFict(true);
+  }
+  function toggleFictPop(open) {
+    if (open && !$('orbPop').hidden) toggleOrb(false);
+    $('fictPop').hidden = !open; $('fictBtn').setAttribute('aria-expanded', String(open));
+  }
+  $('fictBtn').addEventListener('click', () => fict.on ? toggleFictPop($('fictPop').hidden) : setFiction(true));
+  $('fictClose').addEventListener('click', () => setFiction(false));
+  // ----- editing -----
+  const fSelIdx = () => F.ids.indexOf($('fSel').value);
+  // Move body i and everything bound to it (its moons) by dx, and change their velocities by dv.
+  function fictShift(i, dx, dv) {
+    fictHosts();
+    const group = [i];
+    for (let pass = 0; pass < 3; pass++) for (let j = 0; j < F.n; j++) if (!group.includes(j) && group.includes(F.host[j]) && F.alive[j]) group.push(j);
+    for (const j of group) for (let k = 0; k < 3; k++) { F.x[3 * j + k] += dx[k]; F.v[3 * j + k] += dv[k]; }
+    for (const j of group) fictClearTrail(j);
+  }
+  function fictRel(i) {
+    fictHosts();
+    const h = F.host[i]; if (h < 0) return null;
+    return { h, r: [0, 1, 2].map(k => F.x[3 * i + k] - F.x[3 * h + k]), u: [0, 1, 2].map(k => F.v[3 * i + k] - F.v[3 * h + k]) };
+  }
+  function fictApply(kind, k, i = fSelIdx()) {
+    const m = F.mult[i], ratio = k / m[kind];
+    if (!isFinite(ratio) || Math.abs(ratio - 1) < 1e-9) return;
+    if (kind === 'mass') F.gm[i] *= ratio;
+    else {
+      const q = fictRel(i); if (!q) return;
+      if (kind === 'dist') fictShift(i, q.r.map(c => c * (ratio - 1)), q.u.map(c => c * (1 / Math.sqrt(ratio) - 1))); // same orbit shape, scaled
+      else fictShift(i, [0, 0, 0], q.u.map(c => c * (ratio - 1)));
+    }
+    m[kind] = k; fictRefresh(); update(simMs);
+  }
+  const fmtX = k => '×' + (k >= 10 ? k.toFixed(0) : k >= 1 ? k.toFixed(2) : k.toPrecision(2));
+  const F_SLIDERS = [['fMass', 'mass', v => 10 ** v, k => Math.log10(k)], ['fDist', 'dist', v => 2 ** v, k => Math.log2(k)], ['fSpeed', 'speed', v => 2 ** v, k => Math.log2(k)]];
+  function fictSyncEditor() {
+    const sel = $('fSel'), cur = sel.value;
+    sel.innerHTML = F.ids.map((id, i) => F.alive[i] ? `<option value="${id}">${fictName(i)}</option>` : '').join('');
+    const ok = id => F.ids.includes(id) && F.alive[F.ids.indexOf(id)];
+    sel.value = ok(cur) ? cur : ok('jupiter') ? 'jupiter' : sel.options[0]?.value;
+    if (fSelIdx() < 0) return;
+    const i = fSelIdx(), isPrimary = i === F.primary;
+    for (const [el, kind, , inv] of F_SLIDERS) { $(el).value = inv(F.mult[i][kind]); $(el + 'V').textContent = fmtX(F.mult[i][kind]); $(el).disabled = isPrimary && kind !== 'mass'; }
+    $('fRev').disabled = isPrimary;
+  }
+  for (const [el, kind, fwd] of F_SLIDERS) {
+    $(el).addEventListener('input', () => { const k = fwd(+$(el).value); $(el + 'V').textContent = fmtX(k); fictApply(kind, k); });
+    $(el).addEventListener('change', () => {
+      const i = fSelIdx(), k = F.mult[i][kind];
+      fictEvent(`You set ${fictName(i)}'s ${kind === 'mass' ? 'mass' : kind === 'dist' ? 'distance' : 'speed'} to ${fmtX(k)}`);
+    });
+  }
+  $('fSel').addEventListener('change', fictSyncEditor);
+  $('fRev').addEventListener('click', () => {
+    const i = fSelIdx(), q = fictRel(i); if (!q) return;
+    fictShift(i, [0, 0, 0], q.u.map(c => -2 * c)); fictRefresh(); fictEvent(`You reversed ${fictName(i)}'s orbit`); update(simMs);
+  });
+  $('fDel').addEventListener('click', () => {
+    const i = fSelIdx(); F.alive[i] = 0; F.v.fill(0, 3 * i, 3 * i + 3); fictRefresh();
+    fictEvent(`You removed ${fictName(i)}`); fictSyncEditor(); update(simMs);
+  });
+  $('fReset').addEventListener('click', () => { fictBuild(); fictEvent('Back to the real Solar System'); fictSyncEditor(); update(simMs); });
+  // Ready-made scenarios: start from reality, change one thing, pick a speed that shows the result, and play.
+  const PRESETS = {
+    star: ['Jupiter is 80 times heavier, just enough to be a small star', 7, () => fictApply('mass', 80, F.ids.indexOf('jupiter'))],
+    nojup: ['Jupiter is gone', 7, () => { const i = F.ids.indexOf('jupiter'); F.alive[i] = 0; F.v.fill(0, 3 * i, 3 * i + 3); }],
+    earthmars: ["Earth (with the Moon) is moved out to Mars's distance", 6, () => fictApply('dist', 1.524, F.ids.indexOf('earth'))],
+    moonclose: ['The Moon is moved to half its distance (its speed adjusts, so it just orbits faster)', 4, () => fictApply('dist', 0.5, F.ids.indexOf('moon')), 'earth'],
+    stopmoon: ['The Moon stops dead in its orbit, with no sideways speed left', 3, () => fictApply('speed', 1e-4, F.ids.indexOf('moon')), 'earth'],
+    halfsun: ['The Sun suddenly loses half its mass', 6, () => fictApply('mass', 0.5, 0)],
+    nosun: ['The Sun vanishes', 6, () => { F.alive[0] = 0; F.v.fill(0, 0, 3); }],
+    rogue: ['A star half the mass of the Sun heads our way at 15 km/s, aimed to pass about 9 AU from the Sun', 7, () => {
+      const i = F.ids.indexOf('rogue'), s = [48, -62, 24], tgt = [10, 10, 0], d = s.map((c, k) => tgt[k] - c), L = Math.hypot(...d), sp = 15 * 86400 / AU_KM;
+      F.gm[i] = 0.5 * GM_KM.sun * KM3S2; F.alive[i] = 1;
+      for (let k = 0; k < 3; k++) { F.x[3 * i + k] = F.x[k] + s[k]; F.v[3 * i + k] = F.v[k] + d[k] / L * sp; }
+    }],
+  };
+  $('fPresets').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const [text, speed, apply, focus] = PRESETS[b.dataset.p];
+    fictBuild(); apply(); fictRefresh(); fictEvent(text);
+    speedIdx = speed; paused = false; renderSpeed(); fictSyncEditor(); update(simMs);
+    if (focus) select(focus); // close-up for the Earth–Moon scenarios
+  });
+  // Drag a planet in the 3D view (in the horizontal plane through it). Its moons come along, and its velocity turns and
+  // scales so its orbit keeps the same shape at the new distance.
+  let fDrag = null;
+  const dragPlane = new THREE.Plane(), dragHit = new THREE.Vector3();
+  const invDist = s => mode === 'comp' ? (s / 12) ** 2 : s / 40;
+  // Pick up the planet under (cx, cy), if there is one that orbits the primary; true if one was picked up.
+  function fictGrab(cx, cy, near) { // near: also accept a body within 28 px (touch)
+    const r = canvas.getBoundingClientRect();
+    ndc.set((cx - r.left) / r.width * 2 - 1, -(cy - r.top) / r.height * 2 + 1); ray.setFromCamera(ndc, camera);
+    const hit = ray.intersectObjects(pickables, false).find(h => !byId[h.object.userData.id]?.gone);
+    const id = hit ? hit.object.userData.id : near ? nearestBody(cx - r.left, cy - r.top, 28) : null, i = id ? F.ids.indexOf(id) : -1;
+    fictHosts();
+    if (i < 0 || i === F.primary || F.host[i] !== F.primary) return false;
+    controls.enabled = false; fDrag = { i, wasPaused: paused, moved: false }; paused = true; renderSpeed();
+    dragPlane.set(new THREE.Vector3(0, 1, 0), -fictBody(F.ids[i]).root.position.y);
+    return true;
+  }
+  // Mouse: press on a planet and drag. Touch: one finger rotates the view as usual, so picking up a planet takes a
+  // long press (350 ms without moving); a second finger (pinch) cancels it.
+  let longPress = null, touchesDown = 0;
+  const cancelLongPress = () => { if (longPress) { clearTimeout(longPress.timer); longPress = null; } };
+  canvas.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'touch') touchesDown++;
+    if (!fict.on || skyOn) return;
+    if (e.pointerType !== 'touch') { fictGrab(e.clientX, e.clientY, false); return; }
+    cancelLongPress();
+    if (touchesDown > 1) return;
+    const x = e.clientX, y = e.clientY;
+    longPress = { x, y, timer: setTimeout(() => { longPress = null; if (fictGrab(x, y, true) && navigator.userActivation?.hasBeenActive) navigator.vibrate?.(15); }, 350) };
+  }, true);
+  canvas.addEventListener('pointermove', e => { if (longPress && Math.hypot(e.clientX - longPress.x, e.clientY - longPress.y) > 10) cancelLongPress(); });
+  for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, e => { if (e.pointerType === 'touch') touchesDown = Math.max(0, touchesDown - 1); cancelLongPress(); });
+  window.addEventListener('pointermove', e => {
+    if (!fDrag) return;
+    const r = canvas.getBoundingClientRect();
+    ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1); ray.setFromCamera(ndc, camera);
+    if (!ray.ray.intersectPlane(dragPlane, dragHit)) return;
+    const q = fictRel(fDrag.i), rs = dragHit.length(); if (!q || rs < 0.5) return;
+    const rAU = invDist(rs), dir = [dragHit.x / rs, -dragHit.z / rs, dragHit.y / rs], nr = dir.map(c => c * rAU), r0 = Math.hypot(...q.r);
+    // Turn the velocity by the change in longitude, and scale it for the new distance.
+    const da = Math.atan2(nr[1], nr[0]) - Math.atan2(q.r[1], q.r[0]), c = Math.cos(da), s = Math.sin(da), k = Math.sqrt(r0 / rAU);
+    const nu = [(q.u[0] * c - q.u[1] * s) * k, (q.u[0] * s + q.u[1] * c) * k, q.u[2] * k];
+    fictShift(fDrag.i, nr.map((v, j) => v - q.r[j]), nu.map((v, j) => v - q.u[j])); fictRefresh(); fDrag.moved = true; update(simMs);
+  });
+  window.addEventListener('pointerup', () => {
+    if (!fDrag) return;
+    if (fDrag.moved) { const q = fictRel(fDrag.i); fictEvent(`You moved ${fictName(fDrag.i)} to ${fmtAU(Math.hypot(...q.r))} from the Sun`); }
+    paused = fDrag.wasPaused; renderSpeed(); controls.enabled = true; $('fSel').value = F.ids[fDrag.i]; fictSyncEditor(); fDrag = null;
+  });
+  // ----- the impact report -----
+  let fictLastRender = 0;
+  function renderFict(force) {
+    if (!fict.on || $('fictPop').hidden) return;
+    const now = performance.now(); if (!force && now - fictLastRender < 500) return; fictLastRender = now;
+    fictHosts();
+    // Host changes become events: lost moons, captures, escapes.
+    const p = F.primary;
+    for (let i = 0; i < F.n; i++) {
+      if (!F.alive[i] || i === p) continue;
+      const was = F.prevHost[i], is = F.host[i];
+      if (was !== is && was >= 0 && is >= 0 && F.alive[was]) fictEvent(is === p ? `${fictName(i)} broke free of ${fictName(was)} and now orbits ${fictName(p)} directly` : `${fictName(i)} was captured by ${fictName(is)}`);
+      F.prevHost[i] = is;
+      const o = fictOrbit(i, p);
+      if (is === p && o.a < 0 && o.r > 30 && !F.mult[i].escaped) { F.mult[i].escaped = true; fictEvent(`${fictName(i)} is escaping into interstellar space`); }
+    }
+    $('fLag').textContent = F.lag && !paused ? 'The simulation can\'t keep up at this speed, so time is running a little slower.' : '';
+    if (fictEventsDirty) {
+      fictEventsDirty = false;
+      $('fEvents').innerHTML = F.events.length ? F.events.map(ev => `<li><time>${new Date(ev.ms).toISOString().slice(0, 10)}</time>${ev.text}</li>`).join('') : '<li>Nothing yet. Pick a scenario or change a body, then press Play.</li>';
+      fictSyncEditor();
+    }
+    const rows = [], quiet = [];
+    const iE = F.ids.indexOf('earth'), real = fictSnapshot(simMs);
+    for (let i = 0; i < F.n; i++) {
+      const id = F.ids[i], b = fictBody(id), base = F.base[i];
+      if (!base && !F.alive[i]) continue;
+      let tag, text;
+      if (!F.alive[i]) { tag = ['bad', 'Gone']; text = (F.events.find(ev => ev.text.startsWith(b.name + ' ') && /fell|crashed/.test(ev.text)) || F.events.find(ev => ev.text.includes(b.name)))?.text || 'Removed'; }
+      else if (i === p) {
+        const m = GM_KM[id] ? F.gm[i] / (GM_KM[id] * KM3S2) : 1;
+        tag = Math.abs(m - 1) > 0.01 ? ['chg', 'Changed'] : ['ok', 'Centre'];
+        text = i === 0 ? `Everything orbits it${Math.abs(m - 1) > 0.01 ? `. Mass ${fmtX(m)} the real Sun's` : ''}.` : 'The heaviest body left, so distances here are measured from it.';
+      } else {
+        const o = fictOrbit(i), hostName = fictName(o.host), bh = base?.host, unit = o.host === p ? v => fmtAU(v) : v => km(v * AU_KM);
+        if (o.host === p && fictOrbit(i, p).a < 0) { tag = ['bad', 'Escaping']; text = `Not bound to anything any more: ${fmtAU(fictOrbit(i, p).r)} from ${fictName(p)} and leaving at ${fictOrbit(i, p).vk.toFixed(1)} km/s.`; }
+        else if (bh !== undefined && bh !== o.host) { tag = ['chg', 'New orbit']; text = `Now orbits ${hostName} (really orbits ${fictName(bh)}), ${unit(o.a)} away, once every ${fmtDur(o.P)}.`; }
+        else if (base) {
+          const da = o.a / base.a - 1, de = o.e - base.e, big = b.isMoon || id === 'moon' ? 0.05 : 0.02;
+          const changed = Math.abs(da) > big || Math.abs(de) > (b.isMoon || id === 'moon' ? 0.05 : 0.03);
+          tag = changed ? ['chg', 'Orbit changed'] : ['ok', 'About the same'];
+          text = `${unit(o.a)} from ${hostName} (real ${unit(base.a)}), ${o.host === p ? 'year' : 'orbit'} ${fmtDur(o.P)} (real ${fmtDur(base.P)}), eccentricity ${o.e.toFixed(2)} (real ${base.e.toFixed(2)}).`;
+          if (!changed && b.isMoon) { quiet.push(b.name); continue; }
+        } else { tag = ['chg', 'Visiting']; text = `${fmtAU(fictOrbit(i, p).r)} from ${fictName(p)}, moving at ${fictOrbit(i, p).vk.toFixed(1)} km/s.`; }
+        if (i === iE) { // what it would mean for us: starlight falls off with the square of the distance
+          // Light from the Sun, plus the visiting star (a 0.5-solar-mass star shines about 0.06 as bright: L ∝ M⁴).
+          const lum = j => j === 0 ? 1 : (F.gm[j] / (GM_KM.sun * KM3S2)) ** 4, r0 = Math.hypot(...real.earth);
+          let flux = 0;
+          for (const j of [0, F.ids.indexOf('rogue')]) if (F.alive[j]) flux += lum(j) * (r0 / Math.hypot(...[0, 1, 2].map(k => F.x[3 * i + k] - F.x[3 * j + k]))) ** 2;
+          const pct = Math.round(flux * 100), dT = Math.round((flux ** 0.25 - 1) * 288); // temperature scales with flux^¼ (288 K today)
+          text += flux < 0.01 ? ' Almost no sunlight reaches it, so Earth would freeze over.'
+            : ` Sunlight ${pct}% of the real amount right now${Math.abs(pct - 100) > 3 ? `, so on average about ${dT > 0 ? '+' : ''}${dT} °C (very roughly)` : ''}.`;
+        }
+      }
+      rows.push({ rank: { bad: 0, chg: 1, ok: 2 }[tag[0]], html: `<li><span class="dot" style="background:${b.color}"></span><span class="nm">${b.name}<span class="tag ${tag[0]}">${tag[1]}</span></span><span class="st">${text}</span></li>` });
+    }
+    rows.sort((a, b) => a.rank - b.rank);
+    $('fImpact').innerHTML = rows.map(r => r.html).join('') + (quiet.length ? `<li><span></span><span class="st">Moons about the same: ${quiet.join(', ')}.</span></li>` : '');
+  }
+
+  // ---------- phones and tablets ----------
+  // Everything here is keyed to PHONE (narrow, or a touch screen on its side) or TOUCH (a finger is the main input).
+  // A desktop with a mouse matches neither, so it keeps its layout; --ctrl-h is set there too but no desktop rule uses it.
+  const PHONE = window.matchMedia('(max-width: 760px), (pointer: coarse) and (max-height: 500px)');
+  const TOUCH = window.matchMedia('(pointer: coarse)');
+  const ctrlEl = document.querySelector('.ctrl');
+  new ResizeObserver(() => document.documentElement.style.setProperty('--ctrl-h', ctrlEl.offsetHeight + 'px')).observe(ctrlEl);
+  // Phones: the bar keeps speed, Play, Now and More; the other buttons move into the More sheet. They're the same
+  // elements, so their listeners and pressed states keep working, and they move back if the screen gets wider.
+  const homes = ['rev', 'eclBtn', 'galBtnOpen', 'fictBtn', 'mComp', 'mTrue', 'tOrb', 'tLbl'].map(id => ({ el: $(id), parent: $(id).parentNode, next: $(id).nextSibling }));
+  function toggleMore(open) { $('morePop').hidden = !open; $('moreBtn').setAttribute('aria-expanded', String(open)); }
+  function layoutBar() {
+    if (PHONE.matches) for (const h of homes) $('moreGrid').appendChild(h.el);
+    else { for (const h of homes) h.parent.insertBefore(h.el, h.next); toggleMore(false); }
+    for (const g of ctrlEl.querySelectorAll('.grp')) g.classList.toggle('empty', !g.querySelector('button'));
+  }
+  $('moreBtn').addEventListener('click', () => toggleMore($('morePop').hidden));
+  $('moreClose').addEventListener('click', () => toggleMore(false));
+  PHONE.addEventListener('change', layoutBar); layoutBar();
+  // Phones and touch tablets: one sheet open at a time. Opening any of these closes the others (with their own
+  // close functions, so modes end cleanly). Watched with a MutationObserver, so the existing toggles stay as they are.
+  const SHEETS = [
+    ['panel', el => el.classList.contains('open'), () => setPanel(false)],
+    ['eclPop', el => !el.hidden, () => toggleEcl(false)],
+    ['galPop', el => !el.hidden, () => setGalaxy(false)],
+    ['fictPop', el => !el.hidden, () => toggleFictPop(false)],
+    ['orbPop', el => !el.hidden, () => toggleOrb(false)],
+    ['morePop', el => !el.hidden, () => toggleMore(false)],
+  ];
+  const sheetShown = new Map(SHEETS.map(([id, vis]) => [id, vis($(id))]));
+  const sheetObs = new MutationObserver(() => {
+    const now = SHEETS.map(([id, vis]) => [id, vis($(id))]), opened = now.find(([id, v]) => v && !sheetShown.get(id));
+    for (const [id, v] of now) sheetShown.set(id, v);
+    if (!opened || !(PHONE.matches || TOUCH.matches)) return;
+    for (const [id, , close] of SHEETS) if (id !== opened[0] && sheetShown.get(id)) close();
+  });
+  for (const [id] of SHEETS) sheetObs.observe($(id), { attributes: true, attributeFilter: ['hidden', 'class'] });
+  // Follow the visible area exactly (the iOS address bar, rotation), not just window resizes.
+  window.visualViewport?.addEventListener('resize', () => resize());
+  new ResizeObserver(() => resize()).observe(canvas);
+  if (TOUCH.matches) {
+    $('hint').firstChild.textContent = 'Drag to rotate · pinch to zoom · tap a body to follow it ';
+    const lg = $('fictPop').querySelector('.legend');
+    lg.textContent = lg.textContent.replace('You can also drag a planet in the 3D view.', 'You can also long-press a planet in the 3D view, then drag it.');
   }
 
   // ---------- labels ----------
@@ -1415,7 +2528,7 @@
     const w = canvas.clientWidth, h = canvas.clientHeight;
     for (const b of BODIES) {
       tmp.copy(b.root.position).project(camera);
-      const on = tmp.z < 1 && Math.abs(tmp.x) < 1.1 && Math.abs(tmp.y) < 1.1;
+      const on = !b.gone && tmp.z < 1 && Math.abs(tmp.x) < 1.1 && Math.abs(tmp.y) < 1.1;
       b.lbl.hidden = !on;
       if (!on) continue;
       // offset above the body by its projected radius
@@ -1432,7 +2545,7 @@
         m.holder.getWorldPosition(tmp);
         const sep = tmp.distanceTo(byId[pid].root.position) * pxPerUnit(pd);
         tmp.project(camera);
-        const on = sep > 60 && tmp.z < 1 && Math.abs(tmp.x) < 1.05 && Math.abs(tmp.y) < 1.05;
+        const on = !m.body.gone && sep > 60 && tmp.z < 1 && Math.abs(tmp.x) < 1.05 && Math.abs(tmp.y) < 1.05;
         if (on) loadMoonMaps(pid);
         m.lbl.hidden = !on;
         if (on) m.lbl.style.transform = `translate(${((tmp.x + 1) / 2 * w).toFixed(1)}px, ${((1 - tmp.y) / 2 * h).toFixed(1)}px) translate(-50%, -140%)`;
@@ -1465,16 +2578,20 @@
   let last = performance.now(), lastUi = 0;
   function frame(now) {
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
-    if (!paused) {
+    if (!paused && fict.on) {
+      // The simulation may fall behind at high speeds; the clock follows how far it actually got.
+      simMs += fictAdvance(dt * SPEEDS[speedIdx].v * dir / 86400) * 86400000;
+      if (simMs < FICT_MIN || simMs > FICT_MAX) { simMs = Math.min(FICT_MAX, Math.max(FICT_MIN, simMs)); paused = true; renderSpeed(); }
+    } else if (!paused) {
       simMs += dt * 1000 * SPEEDS[speedIdx].v * dir;
       if (simMs < MIN_MS || simMs > MAX_MS) { simMs = Math.min(MAX_MS, Math.max(MIN_MS, simMs)); paused = true; renderSpeed(); }
     }
     update(simMs); tintMoon(); if (galOn) updateTrails();
     updateCamera(now);
     controls.update();
-    renderer.render(scene, camera);
-    placeLabels();
-    if (now - lastUi > 200) { lastUi = now; renderClock(); renderRows(); renderDetail(); renderEclipses(); renderWhy(); }
+    if (skyOn) { updateSky(); renderer.render(skyScene, skyCam); }
+    else { renderer.render(scene, camera); placeLabels(); }
+    if (now - lastUi > 200) { lastUi = now; renderClock(); renderRows(); renderDetail(); renderEclipses(); renderWhy(); renderFict(); }
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
