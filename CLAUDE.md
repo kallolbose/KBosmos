@@ -39,5 +39,6 @@ A single-file web app (`kbosmos.html`) that shows the Sun, planets, Moon and Plu
 ## Running locally
 - Opening `kbosmos.html` from disk works in Chrome. The browser pane, though, renders `file://` pages as a snapshot without relative files, so test over HTTP. `.claude/launch.json` starts `.claude/serve.ps1`, a PowerShell static server on http://localhost:8765. Python and Node aren't installed on this machine.
 
-## Published copy
+## Published copies
+- GitHub Pages: https://kallolbose.github.io/KBosmos/ (serves `main`, root). `index.html` just forwards to `kbosmos.html`, and `.nojekyll` makes Pages serve files as they are. Pushing to `main` updates it.
 - Artifact: https://claude.ai/artifact/VwvJqCV1FGmFAhae6u1aLx. Republish after changes by publishing `kbosmos.html` with that URL. Publish `textures/js/*.js` via `files` when they change. The raw images aren't published. Files left out are kept on later publishes.

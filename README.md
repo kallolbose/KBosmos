@@ -4,6 +4,8 @@ A 3D solar system that shows the Sun, planets, Moon, Pluto and 20 major moons wh
 
 It's a single HTML page built with [Three.js](https://threejs.org/). There's no build step and nothing to install.
 
+**Try it:** https://kallolbose.github.io/KBosmos/
+
 ## Features
 
 - **Real positions, live.** Planets use NASA JPL's Keplerian orbital elements (accurate from 1800 to 2050). The Moon uses the main terms of Meeus's lunar theory (accurate to about 10 arcseconds).
