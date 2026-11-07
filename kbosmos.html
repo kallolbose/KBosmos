@@ -103,12 +103,23 @@
   .hud .ecl { font: 600 11px/1.3 var(--f-ui); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
   .hud .trip { font: 400 12px/1.4 var(--f-ui); color: var(--dim); max-width: 34ch; }
   .hud .trip b { font: 500 13px/1 var(--f-data); color: var(--ink); font-variant-numeric: tabular-nums; }
-  #eclPop, #galPop, #fictPop {
+  #eclPop, #galPop, #fictPop, #cometPop {
     position: absolute; left: 16px; bottom: 74px; width: 380px; max-width: calc(100% - 32px);
     max-height: calc(100% - 200px); overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding-block: 14px; display: grid; gap: 12px;
   }
-  #eclPop[hidden], #galPop[hidden], #fictPop[hidden] { display: none; }
+  #eclPop[hidden], #galPop[hidden], #fictPop[hidden], #cometPop[hidden] { display: none; }
+  .clist { list-style: none; margin: 0; padding: 0; }
+  .clist li { padding: 10px 16px; border-top: 1px solid var(--line); display: grid; gap: 6px; }
+  .clist .ct { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .clist .ct b { font-weight: 600; }
+  .clist .ct .tag { margin-left: auto; }
+  .clist .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .clist .cmeta { font: 500 11.5px/1.45 var(--f-data); color: var(--dim); font-variant-numeric: tabular-nums; }
+  .clist p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--dim); }
+  .clist .seg button { padding: 5px 9px; font-size: 12px; }
+  .clist li.on .ct b { color: var(--accent); }
+  .lbl.comet { color: #bfe3ff; }
   #orbPop {
     position: absolute; left: 50%; transform: translateX(-50%); z-index: 5; bottom: 74px; width: 250px; max-width: calc(100% - 32px);
     max-height: calc(100% - 200px); overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
@@ -184,6 +195,19 @@
   .fimp .st { grid-column: 2; color: var(--dim); line-height: 1.45; }
   .tag { font: 600 9.5px/1 var(--f-ui); letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 5px; border-radius: 3px; margin-left: 8px; border: 1px solid; }
   .tag.ok { color: #8d91a3; border-color: #3a3d48; } .tag.chg { color: #ffc861; border-color: #6b5a2f; } .tag.bad { color: #e07a62; border-color: #6b3428; }
+  .fev .evlink { margin-left: 6px; padding: 1px 7px; min-height: 0; font-size: 11px; }
+  /* Impact card (What if…): what a collision would really mean. Desktop: top centre. Phones: a sheet like the others. */
+  #impCard {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 5; width: 380px; max-width: calc(100% - 32px);
+    max-height: calc(100% - 200px); overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding-block: 12px; display: grid; gap: 10px;
+  }
+  #impCard[hidden] { display: none; }
+  #impTitle { margin: 0; font: 600 16px/1.3 var(--f-ui); color: var(--ink); text-transform: none; letter-spacing: 0; }
+  .impNums { display: grid; grid-template-columns: max-content 1fr; gap: 5px 12px; margin: 0; font-size: 12.5px; line-height: 1.45; }
+  .impNums dt { color: var(--dim); }
+  .impNums dd { margin: 0; font: 400 12.5px/1.45 var(--f-ui); text-align: left; font-variant-numeric: tabular-nums; }
+  #impMeans { color: var(--ink); }
   tr.gone td { opacity: 0.4; }
   button:disabled { opacity: 0.4; cursor: default; }
   /* Watch from Earth: the sky view replaces space, so space-only overlays step aside. */
@@ -232,7 +256,7 @@
     #moreBtn, #fictHide, #fictChip:not([hidden]), #galHide, #galChip:not([hidden]) { display: inline-block; }
     .ctrl .grp.empty { display: none; }
     .sep { display: none; }
-    #panel, #eclPop, #galPop, #orbPop, #fictPop, #morePop, #skyCard {
+    #panel, #eclPop, #galPop, #orbPop, #fictPop, #morePop, #skyCard, #impCard, #cometPop {
       top: auto; left: 8px; right: 8px; width: auto; max-width: none; transform: none;
       bottom: calc(var(--ctrl-h) + 16px + var(--sb)); max-height: min(60%, calc(100% - var(--ctrl-h) - 110px - var(--st)));
       overflow-y: auto; overscroll-behavior: contain;
@@ -255,7 +279,7 @@
   /* Touch tablets: popovers and the side panel share the width instead of overlapping. */
   @media (pointer: coarse) and (min-width: 761px) and (min-height: 501px) {
     .ctrl { bottom: calc(16px + var(--sb)); }
-    #eclPop, #galPop, #fictPop { width: min(380px, 46vw); bottom: calc(var(--ctrl-h) + 24px + var(--sb)); max-height: calc(100% - var(--ctrl-h) - 140px); }
+    #eclPop, #galPop, #fictPop, #cometPop { width: min(380px, 46vw); bottom: calc(var(--ctrl-h) + 24px + var(--sb)); max-height: calc(100% - var(--ctrl-h) - 140px); }
     #orbPop { bottom: calc(var(--ctrl-h) + 24px + var(--sb)); }
     #panel { width: min(340px, 44vw); top: calc(16px + var(--st)); max-height: calc(100% - var(--ctrl-h) - 60px); }
     #morePop { left: 50%; transform: translateX(-50%); width: 320px; bottom: calc(var(--ctrl-h) + 24px + var(--sb)); }
@@ -363,6 +387,16 @@
     <ul class="fimp" id="fImpact"></ul>
   </section>
 
+  <section id="impCard" hidden aria-label="Impact report" aria-live="polite">
+    <div class="ph"><span class="eyebrow" id="impWhen">Impact</span><span class="btns"><button id="impReplay" title="Rewind to just before the impact and play it again">Replay</button><button id="impClose">Close</button></span></div>
+    <div class="fsec">
+      <h3 id="impTitle"></h3>
+      <dl class="impNums" id="impNums"></dl>
+      <p id="impMeans"></p>
+      <p class="legend">Time, place, speed and energy come from the simulation. The flash, plume, shockwave and debris are illustrations scaled to that energy, not a simulation of the blast itself. Crater sizes use standard impact scaling (Collins, Melosh &amp; Marcus 2005), so they're rough.</p>
+    </div>
+  </section>
+
   <section id="skyCard" hidden aria-label="Watching the eclipse from Earth">
     <div class="ph"><span class="eyebrow" id="skyWhere">Watching from Earth</span><button id="skyClose">Back to space</button></div>
     <p id="skyWhat"></p>
@@ -381,6 +415,13 @@
       <button data-set="none">None</button>
     </div>
     <ul class="olist" id="orbList"></ul>
+  </section>
+
+  <section id="cometPop" hidden aria-label="Comets and interstellar visitors">
+    <div class="ph"><span class="eyebrow">Comets &amp; interstellar visitors</span><button id="cometClose">Close</button></div>
+    <div class="fsec"><p>Comets are mostly ice and dust. Near the Sun the ice turns to gas, which makes the glowing <b>coma</b> and two tails pointing away from the Sun: a straight blue <b>ion tail</b> and a curved, yellowish <b>dust tail</b>. The first three below came from other stars and pass through only once.</p></div>
+    <ul class="clist" id="cometList"></ul>
+    <p class="fine">Orbits are from NASA JPL Horizons, taken at each comet's closest pass to the Sun, so positions are best around then and drift slowly away from it (planets tug on comets). Tails are drawn to show their direction and roughly how they grow, not their exact length.</p>
   </section>
 
   <section id="galPop" hidden aria-label="Galaxy view">
@@ -414,6 +455,7 @@
       <button id="pause" aria-pressed="false">Pause</button>
       <button id="now" title="Jump to the current moment">Now</button>
       <button id="eclBtn" aria-expanded="false" aria-controls="eclPop" title="Jump to past and future eclipses">Eclipses</button>
+      <button id="cometBtn" aria-expanded="false" aria-controls="cometPop" title="Famous comets and visitors from other stars">Comets</button>
       <button id="galBtnOpen" aria-expanded="false" aria-controls="galPop" title="How the solar system moves through the galaxy">Galaxy</button>
       <button id="fictBtn" aria-pressed="false" aria-expanded="false" aria-controls="fictPop" title="Change the Solar System and see what every body does">What if…</button>
       <button id="moreBtn" aria-expanded="false" aria-controls="morePop">More ▾</button>
@@ -619,6 +661,7 @@
   let mode = 'comp';
   const distScale = r => mode === 'comp' ? 12 * Math.sqrt(r) : 40 * r;          // r in AU
   function sceneRadius(b) {
+    if (b.isComet) return 0.02; // a nucleus of a few km: shown as a speck either way
     if (b.isMoon) return moonSize(b.m, b.parent) * sceneRadius(b.parent);
     // Geometry view: Earth and Moon at true size relative to the Moon's orbit (mean distance = 60.27 Earth radii).
     if (explain && (b.id === 'earth' || b.id === 'moon')) return moonSceneDist() / 60.27 * (b.R / 6371);
@@ -985,6 +1028,271 @@
     }
   }
 
+  // ---------- comets and interstellar visitors ----------
+  // Osculating elements from JPL Horizons (heliocentric, ecliptic J2000), taken at each perihelion so each is best when
+  // the comet is bright: [e, q (AU), i, node, arg. of perihelion (°), perihelion JD (TDB)]. Halley has one set per
+  // return; the one with the nearest perihelion is used, which keeps 1835, 1910 and 1986 on time (planets shift its period).
+  const MU_SUN = 0.01720209895 ** 2; // AU³/day²
+  const COMETS = [
+    { id: 'oumuamua', name: 'ʻOumuamua', desig: '1I/2017 U1', kind: 'Interstellar object', color: '#d9a07a', tail: 0, size: 'A few hundred metres long and very elongated',
+      el: [[1.199430685, 0.2560498105, 122.7370629, 24.60045173, 241.8453750, 2458005.994982]],
+      fact: 'The first known visitor from another star, spotted on 19 Oct 2017 by the Pan-STARRS telescope in Hawaii, 40 days after it passed the Sun. It showed no coma or tail, yet sped up slightly as it left, probably pushed by gas too faint to see.' },
+    { id: 'borisov', name: '2I/Borisov', desig: 'C/2019 Q4', kind: 'Interstellar comet', color: '#9fc4ff', tail: 0.25, size: 'Under 1 km across',
+      el: [[3.356479398, 2.006523259, 44.05261525, 308.1477006, 209.1242889, 2458826.053644]],
+      fact: 'The first interstellar comet, found on 30 Aug 2019 by amateur astronomer Gennadiy Borisov in Crimea. It looked like an ordinary comet, except for unusually large amounts of carbon monoxide.' },
+    { id: 'atlas3i', name: '3I/ATLAS', desig: 'C/2025 N1', kind: 'Interstellar comet', color: '#b9e3a8', tail: 0.35, size: 'Under about 5 km across',
+      el: [[6.139342010, 1.356449296, 175.1130277, 322.1556412, 128.0075351, 2460977.982350]],
+      fact: 'The third visitor from another star, found on 1 Jul 2025 by the ATLAS survey telescope in Chile. The fastest so far, about 58 km/s far from the Sun. It passed close to Mars in Oct 2025 and could be older than the Solar System.' },
+    { id: 'halley', name: 'Halley', desig: '1P/Halley', kind: 'Comet', color: '#cfe6ff', tail: 0.8, size: 'About 15 × 8 km',
+      el: [[0.9673931024, 0.5865630003, 162.2588014, 57.51848873, 110.7042906, 2391598.939600],
+        [0.9672962881, 0.5872083648, 162.2188739, 58.56233629, 111.7365758, 2418781.678492],
+        [0.9672792272, 0.5871034488, 162.2422243, 58.85993641, 111.8655481, 2446470.958961],
+        [0.9665767671, 0.5927819456, 161.9651213, 59.39231570, 112.0521038, 2474034.220125]],
+      fact: 'The most famous comet, back every 75–76 years. Edmond Halley predicted its 1758 return. Mark Twain was born during its 1835 pass and died the day after the 1910 perihelion. The Giotto probe flew 600 km from its nucleus in 1986. Next perihelion: 28 Jul 2061.' },
+    { id: 'halebopp', name: 'Hale–Bopp', desig: 'C/1995 O1', kind: 'Comet', color: '#ffe2a8', tail: 1, size: 'About 60 km across, unusually large',
+      el: [[0.9951314746, 0.9141695067, 89.43017155, 282.4706029, 130.5872525, 2450539.633099]],
+      fact: 'The Great Comet of 1997, found by Alan Hale and Thomas Bopp in 1995 and visible to the naked eye for a record 18 months. Its next return is in about 2,500 years.' },
+    { id: 'hyakutake', name: 'Hyakutake', desig: 'C/1996 B2', kind: 'Comet', color: '#a8f0ff', tail: 0.75, size: 'About 4 km across',
+      el: [[0.9997295134, 0.2302272039, 124.9235923, 188.0454296, 130.1724037, 2450204.894615]],
+      fact: 'The Great Comet of 1996 passed only 0.10 AU from Earth on 25 Mar 1996, with a tail stretching across the sky. The Ulysses probe later crossed its ion tail 570 million km from the head, the longest tail ever measured.' },
+    { id: 'neowise', name: 'NEOWISE', desig: 'C/2020 F3', kind: 'Comet', color: '#ffd0a0', tail: 0.6, size: 'About 5 km across',
+      el: [[0.9991782081, 0.2946512466, 128.9375043, 61.01042992, 37.27865263, 2459034.178897]],
+      fact: 'Found by NASA\'s NEOWISE space telescope in Mar 2020, it became the brightest comet in the northern sky since Hale–Bopp that July. Its next return is in about 6,800 years.' },
+    { id: 'tsuchinshan', name: 'Tsuchinshan–ATLAS', desig: 'C/2023 A3', kind: 'Comet', color: '#f0c8ff', tail: 0.7, size: 'Not measured',
+      el: [[1.000020193, 0.3914228969, 139.1105463, 21.55945689, 308.4913086, 2460581.242087]],
+      fact: 'The bright comet of Oct 2024, found by Purple Mountain Observatory (Tsuchinshan) in China and by ATLAS in South Africa. Its orbit is now very slightly open, so it may never come back.' },
+  ];
+  // Stumpff functions C(z), S(z) for the universal-variable Kepler equation.
+  function stumpff(z) {
+    if (z > 1e-3) { const s = Math.sqrt(z); return [(1 - Math.cos(s)) / z, (s - Math.sin(s)) / (s * z)]; }
+    if (z < -1e-3) { const s = Math.sqrt(-z); return [(Math.cosh(s) - 1) / -z, (Math.sinh(s) - s) / (s * -z)]; }
+    return [1 / 2 - z / 24 + z * z / 720, 1 / 6 - z / 120 + z * z / 5040];
+  }
+  function cometFrame([e, q, inc, om, w]) {
+    const cO = Math.cos(om * DEG), sO = Math.sin(om * DEG), ci = Math.cos(inc * DEG), si = Math.sin(inc * DEG), cw = Math.cos(w * DEG), sw = Math.sin(w * DEG);
+    return { P: [cw * cO - sw * sO * ci, cw * sO + sw * cO * ci, sw * si], Q: [-sw * cO - cw * sO * ci, -sw * sO + cw * cO * ci, cw * si] };
+  }
+  // Position and velocity (AU, AU/day, ecliptic J2000) at jd: a universal-variable Kepler solve from perihelion, so
+  // ellipses, parabolas and hyperbolas all work (Tsuchinshan–ATLAS has e = 1.00002). Laguerre's method, which
+  // converges for this equation from rough starts.
+  function cometPV(set, jd) {
+    const [e, q, , , , tp] = set, a = (1 - e) / q, sm = Math.sqrt(MU_SUN), { P, Q } = cometFrame(set);
+    let dt = jd - tp;
+    if (a > 0) { const per = 2 * Math.PI / (sm * a ** 1.5); dt -= per * Math.round(dt / per); }
+    let x;
+    if (a > 0) x = sm * dt * a;
+    else if (e > 1.1) { const M = sm * (-a) ** 1.5 * dt; x = Math.asinh(M / e) / Math.sqrt(-a); }
+    else { const c = 3 * sm * dt, d = Math.sqrt(c * c + 8 * q ** 3); x = Math.cbrt(c + d) + Math.cbrt(c - d); } // parabola: x³/6 + qx = √μ·dt
+    for (let k = 0; k < 40; k++) {
+      const z = a * x * x, [C, S] = stumpff(z);
+      const F = e * x ** 3 * S + q * x - sm * dt, F1 = e * x * x * C + q, F2 = e * x * (1 - z * S);
+      const dx = 5 * F / (F1 + Math.sign(F1) * Math.sqrt(Math.abs(16 * F1 * F1 - 20 * F * F2)));
+      x -= dx;
+      if (Math.abs(dx) < 1e-13 * (1 + Math.abs(x))) break;
+    }
+    const z = a * x * x, [C, S] = stumpff(z), r = e * x * x * C + q, v0 = Math.sqrt(MU_SUN * (1 + e) / q);
+    const f = 1 - x * x * C / q, g = dt - x ** 3 * S / sm, fd = sm / (r * q) * (z * S - 1) * x, gd = 1 - x * x * C / r;
+    return { p: [0, 1, 2].map(k => f * q * P[k] + g * v0 * Q[k]), v: [0, 1, 2].map(k => fd * q * P[k] + gd * v0 * Q[k]), r };
+  }
+  const cometSet = (c, jd) => c.el.reduce((best, s) => Math.abs(s[5] - jd) < Math.abs(best[5] - jd) ? s : best);
+  const jdToMs = jd => (jd - 2440587.5) * 86400000;
+  // The path within 60 AU of the Sun (Hale–Bopp's aphelion is 375 AU), by true anomaly.
+  function cometPath(set) {
+    const [e, q] = set, { P, Q } = cometFrame(set), RMAX = 60, pts = [];
+    const cl = (q * (1 + e) / RMAX - 1) / e, lim = cl <= -1 ? Math.PI : Math.acos(Math.min(1, cl)) * 0.9999;
+    for (let k = 0; k <= 600; k++) {
+      const nu = -lim + 2 * lim * k / 600, r = q * (1 + e) / (1 + e * Math.cos(nu)), c = Math.cos(nu) * r, s = Math.sin(nu) * r;
+      const p = [0, 1, 2].map(j => c * P[j] + s * Q[j]);
+      pts.push(eclToScene(p, distScale(r) / r));
+    }
+    return pts;
+  }
+  const COARSE = window.matchMedia('(pointer: coarse)').matches;
+  const TAIL_N = COARSE ? 20 : 28, TAIL_W = 2.4 / TAIL_N; // glows overlap by at least 2.4×, so the tail reads as one smooth streak
+  const softTex = radialTex([[0, 'rgba(255,255,255,1)'], [0.3, 'rgba(255,255,255,0.5)'], [1, 'rgba(255,255,255,0)']]);
+  const cometTails = new THREE.Group(); scene.add(cometTails);
+  const nucleusGeo = new THREE.IcosahedronGeometry(1, 1);
+  for (const c of COMETS) {
+    Object.assign(c, { isComet: true, R: 0, root: new THREE.Group() });
+    const nuc = new THREE.Mesh(nucleusGeo, new THREE.MeshLambertMaterial({ color: '#6f665d', flatShading: true }));
+    nuc.scale.set(1, 0.7, 0.8); c.root.add(nuc); c.nuc = nuc;
+    const dot = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(3), 3)),
+      new THREE.PointsMaterial({ color: c.color, size: 5, sizeAttenuation: false, map: dotTex(), transparent: true, alphaTest: 0.3 }));
+    c.root.add(dot);
+    // The coma glows over the nucleus (a real nucleus is hidden inside its coma).
+    c.coma = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color: '#cfeee0', blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, transparent: true }));
+    c.coma.renderOrder = 10; c.root.add(c.coma);
+    // An invisible ball a little bigger than the nucleus, so a click near it picks the comet.
+    const pick = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 6), new THREE.MeshBasicMaterial({ visible: false }));
+    pick.userData.id = c.id; c.root.add(pick); pickables.push(pick); c.pick = pick;
+    const tailSprites = color => Array.from({ length: TAIL_N }, () => {
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+      cometTails.add(s); return s;
+    });
+    c.ion = tailSprites('#7fb0ff'); c.dust = tailSprites('#ffe0a8');
+    scene.add(c.root);
+    c.lbl = document.createElement('div'); c.lbl.className = 'lbl small comet'; c.lbl.textContent = c.name; c.lbl.hidden = true;
+    c.lbl.addEventListener('click', () => select(c.id)); labelsEl.appendChild(c.lbl);
+    byId[c.id] = c;
+  }
+  const ctmp = new THREE.Vector3();
+  const auToScene = p => { const r = Math.hypot(...p); return eclToScene(p, distScale(r) / r); };
+  // Tails: the ion tail (blue) points straight away from the Sun; the dust tail (yellow) curves back along the orbit.
+  // Both grow as the comet nears the Sun (from about 3.5 AU in), scaled by how active each comet is (`tail`).
+  function cometsUpdate(ms) {
+    const jd = ms / 86400000 + 2440587.5, hide = fict.on;
+    cometTails.visible = !hide;
+    for (const c of COMETS) {
+      c.gone = hide; c.root.visible = !hide;
+      if (c.line) c.line.visible = !hide && orbShown('comets');
+      if (hide) continue;
+      const set = cometSet(c, jd), { p, v, r } = cometPV(set, jd);
+      if (c.line && c.lineSet !== set) { c.lineSet = set; c.line.geometry.dispose(); c.line.geometry = new THREE.BufferGeometry().setFromPoints(cometPath(set)); }
+      c.st = { p, v, r, set };
+      c.root.position.copy(auToScene(p));
+      const act = c.tail * Math.min(1, Math.max(0, (3.5 - r) / 2.5)), Li = 0.15 * Math.min(1 / r, 4) * act, Ld = 0.6 * Li;
+      c.act = act;
+      const u = p.map(k => k / r), vr = vdot(v, u), vp = v.map((k, j) => k - vr * u[j]), vpl = Math.hypot(...vp) || 1;
+      const lenI = Li > 0 ? auToScene(p.map((k, j) => k + Li * u[j])).distanceTo(c.root.position) : 0;
+      const lenD = Ld > 0 ? auToScene(p.map((k, j) => k + Ld * (u[j] - 0.45 * vp[j] / vpl))).distanceTo(c.root.position) : 0;
+      c.tailLen = lenI;
+      c.ion.forEach((s, k) => {
+        const f = (k + 0.5) / TAIL_N; s.visible = act > 0.01;
+        if (!s.visible) return;
+        s.position.copy(auToScene(p.map((q, j) => q + Li * f * u[j])));
+        s.scale.setScalar(Math.max(1e-4, lenI * Math.max(TAIL_W, 0.05 + 0.07 * f)));
+        s.material.opacity = Math.min(1, 0.7 * act) * (1 - f) ** 1.2;
+      });
+      c.dust.forEach((s, k) => {
+        const f = (k + 0.5) / TAIL_N; s.visible = act > 0.01;
+        if (!s.visible) return;
+        s.position.copy(auToScene(p.map((q, j) => q + Ld * (f * u[j] - 0.45 * f * f * vp[j] / vpl))));
+        s.scale.setScalar(Math.max(1e-4, lenD * Math.max(TAIL_W, 0.07 + 0.3 * f)));
+        s.material.opacity = Math.min(1, 0.6 * act) * (1 - f) ** 1.5;
+      });
+      const nucR = sceneRadius(c);
+      c.nuc.scale.set(nucR, nucR * 0.7, nucR * 0.8); c.nuc.rotation.y = jd * 0.7;
+      c.coma.visible = act > 0.01; c.coma.scale.setScalar(Math.max(nucR * 6, lenI * 0.14));
+      c.coma.material.opacity = Math.min(1, 0.4 + act);
+      c.pick.scale.setScalar(Math.max(nucR * 4, lenI * 0.06));
+    }
+  }
+
+  // ---------- comet Shoemaker–Levy 9 (D/1993 F2) ----------
+  // Jupiter-centred states from JPL Horizons (ecliptic J2000; JD − 2448000 TDB, km, km/s). SL9_REF is fragment G every
+  // 8 days from 1988 (twice a day around the 7 Jul 1992 break-up); SL9_FRAGS has each piece's impact time (where its
+  // path meets Jupiter's 1-bar ellipsoid; Horizons treats Jupiter as a point) and its own state 2.5 days before.
+  // Between samples: two-body orbits round Jupiter. Before its last days each piece follows G's path shifted in time,
+  // the shift growing from zero at the break-up to its real gap at impact, so the train stretches out over two years.
+  // In its last days it blends onto its own orbit, so impact times and places are exact. Impact times match the
+  // published ones (which are when Earth saw them, ~42 min later) to about 2 minutes.
+  const SL9_REF = [[-838.5,-12712910,24960505,3376253,-0.69702,1.214284,-1.485124],[-830.5,-13175702,25765139,2345517,-0.643239,1.116008,-1.496467],[-822.5,-13603086,26502800,1308543,-0.593688,1.019896,-1.503298],[-814.5,-13995475,27176778,268318,-0.543696,0.931638,-1.505984],[-806.5,-14354993,27790086,-772588,-0.49756,0.843038,-1.505382],[-798.5,-14681704,28345255,-1811916,-0.449449,0.762618,-1.501523],[-790.5,-14977483,28845116,-2847681,-0.404991,0.682421,-1.495102],[-782.5,-15242317,29291698,-3878116,-0.360558,0.610389,-1.486087],[-774.5,-15477987,29687552,-4901646,-0.319798,0.535987,-1.475135],[-766.5,-15684366,30034099,-5916855,-0.277873,0.468602,-1.462043],[-758.5,-15862902,30333758,-6922444,-0.238408,0.3995,-1.447333],[-750.5,-16013516,30587614,-7917243,-0.198972,0.336851,-1.430837],[-742.5,-16137425,30797899,-8900151,-0.160878,0.271549,-1.413009],[-734.5,-16234561,30965362,-9870176,-0.121815,0.212346,-1.393605],[-726.5,-16305793,31092203,-10826350,-0.083632,0.152866,-1.372952],[-718.5,-16351312,31179056,-11767803,-0.047046,0.098532,-1.350949],[-710.5,-16371805,31227890,-12693672,-0.011123,0.042985,-1.327865],[-702.5,-16367614,31239102,-13603177,0.023841,-0.009247,-1.303583],[-694.5,-16339063,31214512,-14495523,0.058995,-0.060866,-1.278222],[-686.5,-16286751,31154488,-15369987,0.091808,-0.110901,-1.251825],[-678.5,-16210745,31060569,-16225826,0.126062,-0.160439,-1.224403],[-670.5,-16111748,30933085,-17062354,0.159238,-0.209163,-1.195989],[-662.5,-15989510,30773463,-17878852,0.193978,-0.254281,-1.166462],[-654.5,-15845032,30582177,-18674652,0.225442,-0.299802,-1.136043],[-646.5,-15677959,30360334,-19449054,0.258341,-0.342148,-1.104545],[-638.5,-15489407,30108414,-20201397,0.288826,-0.386363,-1.072185],[-630.5,-15278831,29827304,-20930982,0.320609,-0.425731,-1.038674],[-622.5,-15047522,29517603,-21637138,0.349053,-0.468667,-1.004369],[-614.5,-14794860,29179838,-22319165,0.379605,-0.507489,-0.968912],[-606.5,-14522069,28814689,-22976369,0.408818,-0.549863,-0.932591],[-598.5,-14228444,28422549,-23608026,0.439578,-0.585808,-0.894998],[-590.5,-13915298,28004302,-24213408,0.467605,-0.625575,-0.856531],[-582.5,-13582066,27560044,-24791766,0.496578,-0.660126,-0.81679],[-574.5,-13229947,27090700,-25342326,0.524079,-0.698416,-0.776076],[-566.5,-12858485,26596213,-25864296,0.551389,-0.731062,-0.734007],[-558.5,-12468838,26077576,-26356845,0.57668,-0.768137,-0.690924],[-550.5,-12060744,25534448,-26819133,0.602256,-0.801756,-0.646468],[-542.5,-11635057,24967812,-27250254,0.628226,-0.838417,-0.600802],[-534.5,-11191680,24377325,-27649293,0.653586,-0.870727,-0.553621],[-526.5,-10731355,23764038,-28015255,0.678403,-0.905151,-0.50509],[-518.5,-10254314,23127476,-28347137,0.702089,-0.937375,-0.454983],[-510.5,-9761031,22468608,-28643838,0.726378,-0.970113,-0.403278],[-502.5,-9252036,21787005,-28904238,0.74802,-1.001209,-0.349853],[-494.5,-8727689,21083523,-29127107,0.769453,-1.032848,-0.294654],[-486.5,-8188827,20357628,-29311188,0.788941,-1.065858,-0.237613],[-478.5,-7635482,19609993,-29455091,0.810275,-1.097444,-0.178442],[-470.5,-7068714,18840270,-29557373,0.82905,-1.130104,-0.117149],[-462.5,-6488485,18049025,-29616443,0.848557,-1.160301,-0.053408],[-454.5,-5896161,17235966,-29630637,0.865684,-1.193497,0.012737],[-446.5,-5291560,16401471,-29598112,0.883992,-1.22234,0.081807],[-438.5,-4676318,15545484,-29516911,0.898528,-1.254334,0.1537],[-430.5,-4050376,14668176,-29384878,0.912641,-1.282586,0.228962],[-422.5,-3415599,13769529,-29199690,0.924119,-1.3163,0.307545],[-414.5,-2771909,12849509,-28958780,0.936337,-1.345056,0.390211],[-406.5,-2121330,11908414,-28659340,0.945613,-1.378179,0.476969],[-398.5,-1464098,10946134,-28298261,0.954017,-1.406423,0.568619],[-390.5,-802478,9963177,-27872105,0.960172,-1.439348,0.665337],[-382.5,-137061,8959439,-27377038,0.964967,-1.46614,0.768132],[-374.5,529541,7935878,-26808765,0.965782,-1.49601,0.87735],[-366.5,1195941,6892514,-26162471,0.962546,-1.521303,0.994084],[-358.5,1859032,5830667,-25432699,0.955867,-1.549911,1.119055],[-350.5,2516523,4750761,-24613267,0.944768,-1.573251,1.253715],[-342.5,3164502,3655020,-23697083,0.928543,-1.596628,1.39924],[-334.5,3799015,2544860,-22676041,0.904635,-1.614682,1.557413],[-326.5,4414617,1423916,-21540744,0.87409,-1.629454,1.730133],[-318.5,5004792,295677,-20280345,0.832006,-1.635171,1.919841],[-310.5,5561083,-833223,-18882198,0.776498,-1.630332,2.129236],[-302.5,6072167,-1955085,-17331681,0.700366,-1.611965,2.361335],[-294.5,6523713,-3057312,-15611892,0.601603,-1.572382,2.619545],[-286.5,6895656,-4122976,-13703777,0.468519,-1.503794,2.906678],[-278.5,7161723,-5125651,-11586718,0.2914,-1.387515,3.224002],[-270.5,7284332,-6027237,-9240909,0.05033,-1.207035,3.567128],[-262.5,7213746,-6769785,-6653162,-0.272738,-0.922576,3.919451],[-254.5,6882508,-7269433,-3830425,-0.704516,-0.497056,4.236299],[-246.5,6212617,-7411593,-825856,-1.251028,0.117062,4.425247],[-238.5,5134696,-7068028,2224364,-1.869262,0.900166,4.342762],[-230.5,3641642,-6153105,5087237,-2.42709,1.74014,3.874649],[-222.5,1827994,-4700192,7503530,-2.776425,2.424287,3.078366],[-214.5,-137102,-2866039,9318427,-2.872143,2.836429,2.174892],[-206.5,-2099586,-840763,10531036,-2.784711,2.989199,1.357851],[-198.5,-3964221,1230057,11233090,-2.603889,2.982191,0.701141],[-190.5,-5691412,3261562,11536073,-2.391651,2.884385,0.198915],[-182.5,-7271019,5211268,11536692,-2.180131,2.752336,-0.179236],[-174.5,-8708901,7062376,11309627,-1.981412,2.602396,-0.464538],[-166.5,-10014888,8809879,10910289,-1.799832,2.455058,-0.681189],[-158.5,-11201324,10456276,10379529,-1.634591,2.310486,-0.847312],[-150.5,-12279196,12005686,9747619,-1.486893,2.176091,-0.975629],[-142.5,-13259234,13464598,9037322,-1.352207,2.047659,-1.075462],[-134.5,-14150384,14838386,8265953,-1.230126,1.928867,-1.153326],[-126.5,-14960711,16133736,7446943,-1.117032,1.818876,-1.214042],[-118.5,-15697344,17355641,6590792,-1.015423,1.717103,-1.261266],[-110.5,-16366326,18509973,5705887,-0.921096,1.623145,-1.297638],[-102.5,-16973420,19600835,4798936,-0.835322,1.534269,-1.325317],[-94.5,-17522990,20633207,3875451,-0.75498,1.454141,-1.345702],[-86.5,-18019921,21610519,2939918,-0.682751,1.37645,-1.360299],[-78.5,-18467417,22536818,1996107,-0.614511,1.305938,-1.369853],[-70.5,-18869615,23414903,1047133,-0.551068,1.235803,-1.375387],[-62.5,-19228706,24248161,95676,-0.490339,1.174807,-1.377186],[-54.5,-19548400,25039121,-856026,-0.434741,1.113472,-1.376138],[-46.5,-19830332,25790500,-1806020,-0.382089,1.060205,-1.372329],[-38.5,-20077811,26504502,-2752654,-0.332773,1.005425,-1.36644],[-30.5,-20291982,27183324,-3694465,-0.286575,0.959407,-1.358391],[-22.5,-20475897,27829027,-4630204,-0.244267,0.910811,-1.348845],[-14.5,-20630468,28443211,-5558762,-0.204745,0.868542,-1.337675],[-6.5,-20758317,29027728,-6479173,-0.166316,0.823482,-1.325343],[1.5,-20860081,29583829,-7390576,-0.130233,0.785662,-1.311665],[9.5,-20938095,30113390,-8292207,-0.095843,0.745946,-1.297087],[17.5,-20993022,30617271,-9183395,-0.06414,0.711479,-1.281479],[25.5,-21026809,31097242,-10063526,-0.032738,0.676035,-1.265109],[33.5,-21040133,31553936,-10932066,-0.004713,0.645674,-1.247896],[41.5,-21034685,31989085,-11788514,0.021789,0.614611,-1.230092],[49.5,-21011310,32402972,-12632453,0.045267,0.58518,-1.211702],[57.5,-20971226,32797145,-13463467,0.069443,0.556047,-1.192763],[65.5,-20915321,33171796,-14281219,0.091094,0.528559,-1.173335],[73.5,-20844492,33528441,-15085359,0.112505,0.502865,-1.153421],[81.5,-20759845,33867132,-15875618,0.131719,0.476499,-1.13318],[89.5,-20661875,34189225,-16651699,0.1516,0.453717,-1.112437],[97.5,-20551838,34494816,-17413379,0.168699,0.430202,-1.091435],[105.5,-20430040,34785128,-18160406,0.184546,0.410558,-1.070017],[113.5,-20297953,35060139,-18892603,0.198324,0.387013,-1.048494],[121.5,-20155515,35320783,-19609754,0.212398,0.368062,-1.026544],[129.5,-20004221,35567153,-20311707,0.225081,0.345616,-1.004505],[137.5,-19843848,35800024,-20998279,0.236879,0.328269,-0.982087],[145.5,-19675972,36019526,-21669341,0.248294,0.306102,-0.959647],[153.5,-19500154,36226199,-22324735,0.259504,0.29018,-0.936795],[161.5,-19317959,36420392,-22964344,0.269768,0.270727,-0.913904],[169.5,-19129014,36602446,-23588033,0.277629,0.256589,-0.890699],[177.5,-18934887,36772708,-24195701,0.285313,0.237209,-0.867523],[185.5,-18735119,36931207,-24787236,0.291837,0.222605,-0.844044],[193.5,-18531082,37078466,-25362540,0.298572,0.204341,-0.820548],[201.5,-18322438,37214335,-25921517,0.303204,0.189625,-0.796833],[209.5,-18110375,37339377,-26464076,0.309247,0.171342,-0.773094],[217.5,-17894588,37453266,-26990135,0.314182,0.156711,-0.749116],[225.5,-17676020,37556775,-27499597,0.319573,0.141196,-0.725039],[233.5,-17454687,37649467,-27992395,0.321995,0.127288,-0.70084],[241.5,-17231323,37732048,-28468437,0.32524,0.112042,-0.676555],[249.5,-17006074,37803907,-28927664,0.326871,0.097106,-0.652167],[257.5,-16779343,37865814,-29369981,0.328967,0.082927,-0.627631],[265.5,-16551558,37917105,-29795338,0.32908,0.066886,-0.603089],[273.5,-16322807,37958436,-30203639,0.330703,0.052089,-0.578367],[281.5,-16093628,37989147,-30594835,0.331907,0.035508,-0.553603],[289.5,-15863822,38009959,-30968825,0.33317,0.022949,-0.528581],[297.5,-15634262,38020284,-31325560,0.332701,0.00677,-0.503606],[305.5,-15404561,38020625,-31664940,0.332264,-0.0059,-0.478384],[313.5,-15175686,38010419,-31986916,0.331504,-0.022769,-0.453193],[321.5,-14947034,37990076,-32291383,0.329749,-0.034948,-0.427728],[329.5,-14719754,37959123,-32578289,0.32765,-0.052999,-0.402358],[337.5,-14493064,37917693,-32847530,0.325645,-0.066904,-0.37671],[345.5,-14268038,37865474,-33099041,0.325076,-0.085384,-0.351066],[353.5,-14043810,37802545,-33332714,0.323095,-0.098182,-0.325106],[361.5,-13821566,37728778,-33548473,0.321445,-0.116045,-0.299179],[369.5,-13600475,37643960,-33746211,0.318488,-0.129761,-0.272972],[377.5,-13381581,37548098,-33925835,0.31681,-0.147486,-0.246721],[385.5,-13164128,37440833,-34087237,0.312653,-0.161464,-0.220214],[393.5,-12949095,37322277,-34230309,0.309516,-0.180066,-0.193683],[401.5,-12735798,37191774,-34354943,0.305491,-0.196855,-0.166922],[409.5,-12524880,37049587,-34461010,0.303907,-0.215684,-0.139998],[417.5,-12315822,36895040,-34548388,0.300422,-0.232456,-0.112837],[425.5,-12109135,36728519,-34616931,0.298088,-0.250676,-0.085496],[433.5,-11904532,36549150,-34666512,0.294577,-0.268945,-0.05795],[441.5,-11702199,36357382,-34696959,0.292356,-0.286547,-0.030112],[449.5,-11502119,36152316,-34708132,0.287973,-0.30536,-0.002103],[457.5,-11304284,35934356,-34699838,0.284098,-0.323931,0.026192],[465.5,-11108860,35702438,-34671925,0.280246,-0.345959,0.054648],[473.5,-10915420,35456958,-34624171,0.277798,-0.365143,0.083535],[481.5,-10724342,35196981,-34556397,0.274893,-0.387643,0.11261],[489.5,-10535039,34922839,-34468355,0.272042,-0.407019,0.14214],[497.5,-10348077,34633582,-34359839,0.269982,-0.430992,0.171888],[505.5,-10162599,34329451,-34230566,0.267572,-0.450088,0.202203],[513.5,-9979382,34009643,-34080294,0.264901,-0.474244,0.232753],[521.5,-9797500,33674160,-33908709,0.260922,-0.495076,0.26385],[529.5,-9617760,33322180,-33715529,0.258945,-0.522174,0.295243],[537.5,-9438995,32953529,-33500395,0.256444,-0.544653,0.327314],[545.5,-9262032,32567620,-33262967,0.25547,-0.572307,0.359781],[553.5,-9085733,32164056,-33002839,0.253167,-0.596467,0.392952],[561.5,-8910851,31742334,-32719604,0.253621,-0.62542,0.426656],[569.5,-8736220,31301876,-32412793,0.252466,-0.650251,0.461194],[577.5,-8562560,30842376,-32081917,0.252426,-0.679062,0.496381],[585.5,-8388896,30362930,-31726435,0.250236,-0.706747,0.53241],[593.5,-8215712,29863195,-31345760,0.250875,-0.738382,0.569269],[601.5,-8042045,29342046,-30939254,0.250491,-0.768974,0.607149],[609.5,-7868146,28799281,-30506201,0.251991,-0.801788,0.64608],[617.5,-7693280,28233517,-30045839,0.252652,-0.835812,0.68616],[625.5,-7517367,27644505,-29557296,0.256099,-0.870694,0.727602],[633.5,-7339806,27030710,-29039637,0.258916,-0.906677,0.77048],[641.5,-7160303,26391884,-28491785,0.262209,-0.942391,0.815035],[649.5,-6978558,25726173,-27912586,0.26492,-0.982655,0.861268],[657.5,-6793895,25033019,-27300694,0.269229,-1.022614,0.909631],[665.5,-6606073,24310337,-26654644,0.274344,-1.067551,0.960183],[673.5,-6414089,23557324,-25972715,0.279837,-1.111409,1.013456],[681.5,-6217849,22771547,-25253006,0.287146,-1.162593,1.06956],[689.5,-6015923,21951682,-24493267,0.295852,-1.212169,1.129289],[697.5,-5808180,21094978,-23690949,0.306878,-1.268615,1.192933],[705.5,-5592918,20199471,-22843006,0.317083,-1.323962,1.261447],[713.5,-5370001,19261680,-21945904,0.330016,-1.38946,1.33541],[721.5,-5137247,18278411,-20995349,0.343547,-1.456025,1.416294],[729.5,-4894097,17245117,-19986180,0.361242,-1.53376,1.505351],[737.5,-4637805,16156834,-18911968,0.379313,-1.615736,1.604856],[745.5,-4367104,15006925,-17764647,0.403634,-1.713236,1.717432],[753.5,-4078121,13787159,-16533740,0.431541,-1.820169,1.847472],[761.5,-3767953,12486821,-15205271,0.468108,-1.947561,2.001047],[769.5,-3430577,11091000,-13759759,0.510527,-2.096984,2.188299],[777.5,-3059249,9578557,-12168528,0.568309,-2.287009,2.4266],[785.5,-2641140,7915958,-10385844,0.646915,-2.536261,2.750369],[793.5,-2154979,6045932,-8329158,0.771354,-2.900329,3.240409],[801.5,-1550229,3845174,-5812188,1.011248,-3.541005,4.165075],[805.5,-1159863,2524370,-4221890,1.28076,-4.165579,5.155698],[806,-1103412,2342047,-3995134,1.333498,-4.277117,5.346222],[806.5,-1044565,2154624,-3759596,1.39231,-4.402669,5.563203],[807,-982955,1961406,-3513990,1.462227,-4.545497,5.813844],[807.5,-918029,1761631,-3256648,1.545931,-4.706779,6.108523],[808,-849168,1554379,-2985363,1.645087,-4.893381,6.462544],[808.5,-775544,1338311,-2697088,1.768704,-5.116839,6.900177],[809,-695780,1111590,-2387401,1.932165,-5.38875,7.463005],[809.5,-607721,871742,-2049393,2.157918,-5.729572,8.229338],[810,-507706,614956,-1671094,2.499837,-6.182578,9.371421],[810.5,-387859,334831,-1227720,3.123736,-6.827445,11.38336],[811,-223033,21435,-644099,4.937197,-7.656431,16.855643],[811.5,73438,421747,58168,0.196389,22.867907,-7.681299],[812,46359,1121815,-271440,-0.897926,12.756519,-7.160289],[812.5,5756,1608395,-562744,-0.957173,10.122248,-6.383029],[813,-35455,2013537,-826571,-0.947022,8.750912,-5.861623],[813.5,-75930,2371307,-1071180,-0.92619,7.867083,-5.480476],[814,-115440,2696773,-1301296,-0.902612,7.231759,-5.184242],[814.5,-153908,2998274,-1519900,-0.878582,6.746583,-4.944005],[815,-191401,3281088,-1729023,-0.85792,6.35983,-4.743226],[815.5,-228073,3548703,-1930134,-0.839967,6.038877,-4.571663],[816,-263965,3803545,-2124335,-0.821638,5.76667,-4.422389],[816.5,-299076,4047511,-2312479,-0.80429,5.533796,-4.290592],[817.5,-367309,4508337,-2673190,-0.775302,5.148182,-4.066978],[825.5,-845811,7451502,-5098978,-0.628879,3.646388,-3.108587],[833.5,-1252118,9726879,-7076302,-0.552047,3.000689,-2.653231],[841.5,-1615215,11656637,-8803191,-0.500802,2.608583,-2.361245],[849.5,-1948113,13358369,-10358475,-0.462671,2.329777,-2.148656],[857.5,-2257705,14893136,-11783993,-0.43355,2.120104,-1.982108],[865.5,-2549052,16296152,-13105477,-0.409885,1.947302,-1.845628],[873.5,-2824786,17591673,-14340143,-0.390584,1.805779,-1.72983],[881.5,-3087758,18795527,-15500310,-0.371723,1.680335,-1.629336],[889.5,-3338924,19920558,-16595098,-0.35652,1.575521,-1.540207],[897.5,-3580447,20975485,-17631585,-0.341686,1.478013,-1.460232],[905.5,-3812556,21968054,-18615316,-0.330225,1.394216,-1.387338],[913.5,-4036993,22903633,-19550815,-0.317377,1.313894,-1.320417],[921.5,-4253541,23787356,-20441753,-0.308598,1.244638,-1.25824],[929.5,-4463801,24622867,-21291236,-0.298902,1.175725,-1.200291],[937.5,-4667325,25413550,-22101846,-0.291985,1.113924,-1.145743],[945.5,-4865382,26162075,-22875815,-0.28202,1.052519,-1.094218],[953.5,-5057361,26870848,-23615036,-0.274942,0.997972,-1.045172],[961.5,-5244415,27542080,-24321168,-0.266121,0.943731,-0.99841],[969.5,-5425990,28177330,-24995650,-0.259576,0.893675,-0.953568],[977.5,-5602955,28778497,-25639743,-0.250898,0.845086,-0.910416],[985.5,-5774864,29346625,-26254566,-0.245142,0.799713,-0.868782],[993.5,-5942447,29883415,-26841098,-0.238851,0.755177,-0.828508],[1001.5,-6105406,30389323,-27400233,-0.233629,0.710625,-0.789501],[1009.5,-6264066,30865902,-27932736,-0.226682,0.668542,-0.751488],[1017.5,-6418261,31313376,-28439325,-0.220412,0.626476,-0.714492],[1025.5,-6568108,31733260,-28920603,-0.214105,0.587486,-0.678281],[1033.5,-6713670,32125482,-29377158,-0.207122,0.546641,-0.64293],[1041.5,-6854726,32491475,-29809464,-0.200305,0.51068,-0.608121],[1049.5,-6991581,32831106,-30218000,-0.193466,0.47265,-0.574038],[1057.5,-7123883,33145673,-30603143,-0.188768,0.438566,-0.540429],[1065.5,-7252137,33434823,-30965291,-0.182127,0.400089,-0.507466],[1073.5,-7375638,33699676,-31304738,-0.176676,0.366572,-0.47481],[1081.5,-7495007,33939968,-31621807,-0.169061,0.329474,-0.442672],[1089.5,-7609426,34156675,-31916727,-0.163834,0.296868,-0.410788],[1097.5,-7719625,34349529,-32189757,-0.155088,0.260244,-0.379319],[1105.5,-7824589,34519343,-32441071,-0.148593,0.229197,-0.347975],[1113.5,-7925157,34666060,-32670866,-0.139954,0.195283,-0.316952],[1121.5,-8020388,34790238,-32879275,-0.13501,0.164832,-0.286084],[1129.5,-8111132,34891820,-33066448,-0.126752,0.130584,-0.255474],[1137.5,-8196336,34971093,-33232477,-0.120782,0.099629,-0.224938],[1145.5,-8276763,35028240,-33377461,-0.112172,0.066555,-0.194559],[1153.5,-8351484,35063303,-33501459,-0.10594,0.035003,-0.164265],[1161.5,-8421111,35076573,-33604525,-0.096232,0.002099,-0.134022],[1169.5,-8484754,35067912,-33686684,-0.087937,-0.0288,-0.103769],[1177.5,-8542911,35037887,-33747938,-0.078495,-0.059038,-0.073481],[1185.5,-8595004,34986119,-33788290,-0.071089,-0.089971,-0.043234],[1193.5,-8641329,34913178,-33807699,-0.062231,-0.120466,-0.012891],[1201.5,-8681418,34818479,-33806137,-0.053628,-0.15217,0.017477],[1209.5,-8715327,34702756,-33783519,-0.045041,-0.181925,0.048015],[1217.5,-8742864,34565252,-33739787,-0.035979,-0.214964,0.078569],[1225.5,-8763785,34406688,-33674811,-0.026259,-0.245312,0.109395],[1233.5,-8778029,34226280,-33588495,-0.014732,-0.277978,0.140356],[1241.5,-8785169,34024877,-33480661,-0.005139,-0.306372,0.171661],[1249.5,-8785500,33801621,-33351175,0.005863,-0.339099,0.20309],[1257.5,-8778377,33557188,-33199815,0.015138,-0.368246,0.234921],[1265.5,-8764205,33290714,-33026401,0.027106,-0.401379,0.266984],[1273.5,-8742171,33002812,-32830658,0.035927,-0.430739,0.299497],[1281.5,-8712878,32692612,-32612353,0.048037,-0.46544,0.332285],[1289.5,-8675295,32360478,-32371158,0.058391,-0.496686,0.365629],[1297.5,-8630012,32005707,-32106769,0.072815,-0.531108,0.399435],[1305.5,-8575968,31628569,-31818791,0.083629,-0.561725,0.43388],[1313.5,-8513915,31228446,-31506844,0.097555,-0.59628,0.468864],[1321.5,-8442756,30805246,-31170458,0.10883,-0.628582,0.504584],[1329.5,-8363156,30358482,-30809156,0.123247,-0.663354,0.541037],[1337.5,-8274088,29887803,-30422378,0.134292,-0.697117,0.578316],[1345.5,-8176178,29392754,-30009528,0.148324,-0.734087,0.616472],[1353.5,-8068380,28872574,-29569934,0.1615,-0.77131,0.655651],[1361.5,-7951056,28326974,-29102847,0.177561,-0.808928,0.696025],[1369.5,-7823336,27754966,-28607440,0.191961,-0.847303,0.737634],[1377.5,-7685482,27156264,-28082779,0.207748,-0.886348,0.780698],[1385.5,-7536758,26529437,-27527841,0.223614,-0.927845,0.825306],[1393.5,-7377127,25874174,-26941440,0.239872,-0.968441,0.871792],[1401.5,-7206084,25188684,-26322284,0.255925,-1.013295,0.920192],[1409.5,-7023352,24472380,-25668859,0.271899,-1.058616,0.970938],[1417.5,-6828464,23722934,-24979495,0.290743,-1.109574,1.024229],[1425.5,-6620698,22939499,-24252207,0.309248,-1.159138,1.080673],[1433.5,-6399739,22119318,-23484773,0.330283,-1.215032,1.140532],[1441.5,-6164576,21260925,-22674530,0.350006,-1.271043,1.204595],[1449.5,-5914878,20360780,-21818421,0.37411,-1.334797,1.273451],[1457.5,-5649168,19416509,-20912730,0.396155,-1.398983,1.34824],[1465.5,-5367065,18423494,-19953059,0.422111,-1.473481,1.429974],[1473.5,-5066584,17377631,-18933957,0.446677,-1.552991,1.520461],[1481.5,-4746812,16272318,-17848698,0.478374,-1.645952,1.621845],[1489.5,-4404793,15100653,-16688639,0.510215,-1.747299,1.737454],[1497.5,-4038665,13852447,-15442529,0.549888,-1.867783,1.871818],[1505.5,-3643902,12514948,-14095034,0.592555,-2.008111,2.032257],[1513.5,-3216156,11069415,-12624411,0.648153,-2.182236,2.230717],[1521.5,-2746803,9488470,-10997645,0.71406,-2.403321,2.489027],[1529.5,-2224034,7726866,-9159774,0.805864,-2.71188,2.852757],[1537.5,-1623048,5698756,-7003837,0.945024,-3.199267,3.442529],[1545.5,-883777,3185631,-4244551,1.241694,-4.247708,4.784312]];
+  const SL9_FRAGS = [['A',1550.312329,[1547.812329,-435603,1597315,-2414051,1.6491,-5.693836,6.841552]],['B',1550.589714,[1548.089714,-446124,1592862,-2414957,1.664327,-5.688836,6.84312]],['C',1550.770756,[1548.270756,-431043,1599629,-2413434,1.643806,-5.698147,6.840498]],['D',1550.966382,[1548.466382,-431092,1599808,-2413332,1.644754,-5.698463,6.840339]],['E',1551.10453,[1548.60453,-429434,1600395,-2413234,1.64307,-5.699123,6.840259]],['F',1551.496381,[1548.996381,-437644,1597883,-2413473,1.65633,-5.694207,6.840469]],['G',1551.78649,[1549.28649,-424651,1602598,-2412689,1.637527,-5.699893,6.839591]],['H',1552.285365,[1549.785365,-422301,1604267,-2412121,1.634068,-5.701985,6.838606]],['K',1552.904913,[1550.404913,-416770,1606778,-2411486,1.628231,-5.704773,6.837779]],['L',1553.3997,[1550.8997,-413347,1608681,-2410928,1.623684,-5.705278,6.837006]],['N',1553.908331,[1551.408331,-415451,1609858,-2410110,1.625176,-5.706413,6.835143]],['P2',1554.111026,[1551.611026,-424090,1608445,-2409814,1.637556,-5.704523,6.833886]],['Q2',1554.293793,[1551.793793,-411670,1611553,-2409693,1.620179,-5.709663,6.834601]],['Q1',1554.314257,[1551.814257,-406840,1611960,-2410039,1.613649,-5.710604,6.835764]],['R',1554.703899,[1552.203899,-404728,1613385,-2409544,1.611906,-5.712344,6.83498]],['S',1555.107595,[1552.607595,-403967,1614296,-2409179,1.611191,-5.712332,6.834414]],['T',1555.228109,[1552.728109,-423240,1610265,-2409059,1.63737,-5.705714,6.832708]],['U',1555.387885,[1552.887885,-410034,1613124,-2409136,1.619183,-5.709979,6.833909]],['V',1555.654135,[1553.154135,-407230,1614446,-2408776,1.614916,-5.712039,6.833414]],['W',1555.808825,[1553.308825,-398279,1616813,-2408523,1.60261,-5.715929,6.83371]]];
+  const MU_JUP = 126712764; // km³/s², Jupiter system
+  const SL9_START = 2447161.5, SL9_BREAK = 2448811.3264, SL9_G = SL9_FRAGS.find(f => f[0] === 'G')[1] + 2448000;
+  const SL9_BIG = new Set(['G', 'K', 'L']); // the largest impacts
+  // Universal-variable two-body propagation from a state (Curtis, Orbital Mechanics, algorithm 3.4), Laguerre's method.
+  function kepProp(r0, v0, dt, mu) {
+    const R0 = Math.hypot(...r0), vr = vdot(r0, v0) / R0, al = 2 / R0 - vdot(v0, v0) / mu, sm = Math.sqrt(mu), k1 = R0 * vr / sm, k2 = 1 - al * R0;
+    let x = sm * Math.abs(al) * dt;
+    for (let it = 0; it < 40; it++) {
+      const z = al * x * x, [C, S] = stumpff(z);
+      const F = k1 * x * x * C + k2 * x ** 3 * S + R0 * x - sm * dt, F1 = k1 * x * (1 - z * S) + k2 * x * x * C + R0, F2 = k1 * (1 - z * C) + k2 * x * (1 - z * S);
+      const dx = 5 * F / (F1 + Math.sign(F1) * Math.sqrt(Math.abs(16 * F1 * F1 - 20 * F * F2)));
+      x -= dx;
+      if (Math.abs(dx) < 1e-12 * (1 + Math.abs(x))) break;
+    }
+    const z = al * x * x, [C, S] = stumpff(z), f = 1 - x * x / R0 * C, g = dt - x ** 3 * S / sm;
+    return [0, 1, 2].map(k => f * r0[k] + g * v0[k]);
+  }
+  const fromNode = (n, jd) => kepProp([n[1], n[2], n[3]], [n[4], n[5], n[6]], (jd - 2448000 - n[0]) * 86400, MU_JUP);
+  function sl9Ref(jd) { // G's path: propagate from the nearest sample
+    const t = jd - 2448000; let lo = 0, hi = SL9_REF.length - 1;
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (SL9_REF[m][0] <= t) lo = m; else hi = m; }
+    return fromNode(Math.abs(SL9_REF[lo][0] - t) <= Math.abs(SL9_REF[hi][0] - t) ? SL9_REF[lo] : SL9_REF[hi], jd);
+  }
+  // Piece k (km from Jupiter), or null before 1988 / after it hit.
+  function sl9Pos(f, jd) {
+    const [, tImp, node] = f, tI = tImp + 2448000, tN = node[0] + 2448000;
+    if (jd < SL9_START || jd >= tI) return null;
+    const frac = Math.min(1, Math.max(0, (jd - SL9_BREAK) / (SL9_G - SL9_BREAK)));
+    const shifted = sl9Ref(jd - (tI - SL9_G) * frac);
+    if (jd < tN - 1) return shifted;
+    const own = fromNode(node, jd), w = Math.min(1, (jd - (tN - 1)) / 1);
+    return shifted.map((v, k) => v + (own[k] - v) * w);
+  }
+  // Where each piece hit, in Jupiter's rotating frame, and when (UTC ms).
+  const TDB_UTC = 60.2 / 86400; // TDB − UTC in 1994, days
+  const sl9 = { id: 'sl9', name: 'Shoemaker–Levy 9', desig: 'D/1993 F2', kind: 'Comet (hit Jupiter)', color: '#ffb48a', isComet: true, isSL9: true, R: 0,
+    root: new THREE.Group(), frags: [], prevJd: null };
+  scene.add(sl9.root);
+  const sl9Pick = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 6), new THREE.MeshBasicMaterial({ visible: false }));
+  sl9Pick.userData.id = 'sl9'; sl9.root.add(sl9Pick); pickables.push(sl9Pick);
+  const sl9Grp = new THREE.Group(); scene.add(sl9Grp);
+  const sl9Burst = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color: '#ffd6a8', blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+  sl9Burst.visible = false; sl9Grp.add(sl9Burst);
+  for (const f of SL9_FRAGS) {
+    const fr = { f, name: f[0], ms: jdToMs(f[1] + 2448000 - TDB_UTC), jd: f[1] + 2448000, big: SL9_BIG.has(f[0]) };
+    fr.dot = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(3), 3)),
+      new THREE.PointsMaterial({ color: '#ffe6cc', size: 3.5, sizeAttenuation: false, map: dotTex(), transparent: true, alphaTest: 0.3 }));
+    fr.coma = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color: '#ffdcb8', blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.8 }));
+    fr.tail = Array.from({ length: 8 }, () => new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color: '#ffe0a8', blending: THREE.AdditiveBlending, depthWrite: false, transparent: true })));
+    sl9Grp.add(fr.dot, fr.coma, ...fr.tail);
+    fr.lbl = document.createElement('div'); fr.lbl.className = 'lbl small comet frag'; fr.lbl.textContent = fr.name; fr.lbl.hidden = true; labelsEl.appendChild(fr.lbl);
+    sl9.frags.push(fr);
+  }
+  sl9.lbl = document.createElement('div'); sl9.lbl.className = 'lbl small comet'; sl9.lbl.textContent = 'Shoemaker–Levy 9'; sl9.lbl.hidden = true;
+  sl9.lbl.addEventListener('click', () => select('sl9')); labelsEl.appendChild(sl9.lbl);
+  byId.sl9 = sl9;
+  // Jupiter-centred km → scene, with the same distance compression as Jupiter's moons.
+  const jovToScene = p => { const J = byId.jupiter, r = Math.hypot(...p); return J.root.position.clone().add(eclToScene(p).normalize().multiplyScalar(sceneRadius(J) * moonDist(r / J.R))); };
+  // Dark spots, made on first use (the shell material is defined further down): a disc and, for the big ones, a ring,
+  // fixed in Jupiter's rotating frame. They appear at each impact and fade over a couple of months.
+  function sl9Scars() {
+    const J = byId.jupiter, q = J.tilt.quaternion.clone().invert();
+    for (const fr of sl9.frags) {
+      const at = fromNode(fr.f[2], fr.jd), r = Math.hypot(...at); fr.dirE = at.map(c => c / r); // impact direction from Jupiter's centre
+      const d = fr.jd - J2000 - TDB_UTC, spin = norm360(J.W0 + J.Wd * d + (J.mapLon0 || 0)) * DEG;
+      const nL = eclToScene(fr.dirE).applyQuaternion(q).applyAxisAngle(new THREE.Vector3(0, 1, 0), -spin);
+      const ang = fr.big ? 0.09 : 0.05;
+      fr.scars = [shellMat({ n: nL, color: '#22150d', ang, mode: 0, alpha: 0.85 }), ...(fr.big ? [shellMat({ n: nL, color: '#2a1a10', ang: ang * 1.7, mode: 1, w: 0.025, alpha: 0.6 })] : [])]
+        .map(m => { const mesh = new THREE.Mesh(shellGeo, m); mesh.scale.setScalar(1.012); mesh.renderOrder = 2; J.spin.add(mesh); return mesh; });
+      fr.scarA = fr.scars.map(m => m.material.userData.u.uAlpha.value);
+    }
+  }
+  function sl9Update(ms) {
+    const jd = ms / 86400000 + 2440587.5 + TDB_UTC, off = fict.on;
+    if (!sl9.frags[0].scars) sl9Scars();
+    const J = byId.jupiter, Rj = sceneRadius(J), sunDir = J.root.position.clone().normalize();
+    let lead = null, alive = 0;
+    sl9.frags.forEach((fr, k) => {
+      // Before the break-up there is one comet: G stands in for it.
+      const p = !off && (jd >= SL9_BREAK || fr.name === 'G') ? sl9Pos(fr.f, jd) : null;
+      const show = !!p;
+      fr.dot.visible = fr.coma.visible = show; fr.tail.forEach(s => { s.visible = show; });
+      fr.pos = show ? jovToScene(p) : null; fr.pk = p; fr.km = show ? Math.hypot(...p) : 0;
+      if (show) {
+        alive++; if (!lead || fr.jd < lead.jd) lead = fr;
+        fr.dot.position.copy(fr.pos); fr.coma.position.copy(fr.pos); fr.coma.scale.setScalar(Rj * 0.08);
+        fr.tail.forEach((s, j) => { const f = (j + 0.5) / 8; s.position.copy(fr.pos).addScaledVector(sunDir, Rj * 0.6 * f); s.scale.setScalar(Rj * (0.06 + 0.1 * f)); s.material.opacity = 0.5 * (1 - f); });
+      }
+      // The impact: a fireball and plume as time passes it (unless time jumped there), then a dark spot that fades.
+      const age = (ms - fr.ms) / 86400000;
+      fr.scars.forEach((m, i) => { m.visible = !off && age >= 0; if (m.visible) m.material.userData.u.uAlpha.value = fr.scarA[i] * Math.exp(-age / 45); });
+      if (!off && sl9.prevJd != null && sl9.prevJd < fr.jd && jd >= fr.jd && jd - sl9.prevJd < 0.25)
+        impactShow(J, eclToScene(fr.dirE).normalize(), { kind: 'gas', sev: fr.big ? 0.4 : 0.25, global: false }, false);
+    });
+    // The break-up (7 Jul 1992): a brief burst where tides tore the comet apart, when time passes it.
+    if (!off && sl9.prevJd != null && sl9.prevJd < SL9_BREAK && jd >= SL9_BREAK && jd - sl9.prevJd < 0.25 && lead) { sl9.burst = performance.now(); sl9Burst.position.copy(lead.pos); }
+    const bt = sl9.burst ? (performance.now() - sl9.burst) / 1000 : 9;
+    sl9Burst.visible = bt < 2.5 && !off;
+    if (sl9Burst.visible) { sl9Burst.scale.setScalar(Rj * (0.2 + 0.5 * Math.min(1, bt * 2))); sl9Burst.material.opacity = 1 - bt / 2.5; }
+    sl9.prevJd = off ? null : jd;
+    sl9.alive = alive; sl9.lead = lead; sl9.gone = !lead;
+    sl9.root.visible = !!lead;
+    if (lead) { sl9.root.position.copy(lead.pos); sl9Pick.scale.setScalar(Rj * 0.25); }
+  }
+
   // ---------- orbit lines ----------
   const orbitGroup = new THREE.Group(); scene.add(orbitGroup);
   let moonRing;
@@ -1023,6 +1331,14 @@
     }
     moonRing.userData.id = 'moon'; moonRing.visible = orbShown('moon');
     orbitGroup.add(moonRing);
+    // Comets: the path for the current return (Halley's changes between returns; cometsUpdate swaps it).
+    const jd = T * 36525 + J2000;
+    for (const c of COMETS) {
+      c.lineSet = cometSet(c, jd);
+      c.line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(cometPath(c.lineSet)), new THREE.LineBasicMaterial({ color: c.color, transparent: true, opacity: 0.22 }));
+      c.line.userData.id = 'comets'; c.line.visible = orbShown('comets');
+      orbitGroup.add(c.line);
+    }
     buildGeometry();
   }
 
@@ -1072,6 +1388,7 @@
   let simMs = Date.now();
   let speedIdx = reduced ? 0 : 3;
   let dir = 1, paused = false, showLabels = true;
+  let impactCam = null, impactSlowLbl = false; // What if… impacts: camera offset while flying in, and the "Slow motion" label
   let focusId = null, trans = null;
   const prevFocus = new THREE.Vector3();
   const state = {}; // per-body live numbers
@@ -1107,6 +1424,7 @@
     }
     for (const b of BODIES) b.spin.rotation.y = norm360(b.W0 + b.Wd * d + (b.mapLon0 || 0)) * DEG;
     if (!fict.on) updateMoons(d);
+    cometsUpdate(ms); sl9Update(ms);
     state.d = d; state.T = T;
   }
 
@@ -1130,6 +1448,17 @@
     document.querySelectorAll('.lbl').forEach(el => el.classList.remove('on'));
   });
   function focusCamPos(b) {
+    if (impactCam && impactCam.id === b.id) return b.root.position.clone().add(impactCam.off); // What if…: side-on to an incoming impact
+    if (b.isSL9) { // the train and Jupiter together
+      const p = b.root.position, J = byId.jupiter.root.position, toJ = J.clone().sub(p), up = new THREE.Vector3(0, 1, 0);
+      const side = new THREE.Vector3().crossVectors(toJ.lengthSq() > 1e-9 ? toJ.clone().normalize() : p.clone().normalize(), up).normalize();
+      return p.clone().add(side.add(up.multiplyScalar(0.45)).normalize().multiplyScalar(Math.max(sceneRadius(byId.jupiter) * 6, toJ.length() * 1.4) * Math.max(1, 0.85 / camera.aspect)));
+    }
+    if (b.isComet) { // side-on to the tail, far enough back to see it
+      const p = b.root.position, tail = p.clone().normalize(), up = new THREE.Vector3(0, 1, 0);
+      const side = new THREE.Vector3().crossVectors(tail, up).normalize();
+      return p.clone().add(side.multiplyScalar(0.85).add(up.multiplyScalar(0.4)).addScaledVector(tail, -0.3).normalize().multiplyScalar(Math.max(0.5, (b.tailLen || 0) * 1.6) * Math.max(1, 0.85 / camera.aspect)));
+    }
     // Planets with moons: back off far enough to frame the moon system (outermost orbit × 1.5).
     const sys = moonSystems[b.id], moonsR = sys ? Math.max(...sys.moons.map(m => m.r)) * sceneRadius(b) * 1.5 : 0;
     const p = b.root.position, dist = Math.max(sceneRadius(b) * 7, moonsR, b.id === 'sun' ? 14 : b.isMoon ? 0.05 : 1.2);
@@ -1157,7 +1486,7 @@
       const k = ease(Math.min(1, (now - trans.t0) / 1100));
       controls.target.lerpVectors(trans.fromT, p, k);
       camera.position.lerpVectors(trans.fromC, focusCamPos(b), k);
-      if (k >= 1) { trans = null; prevFocus.copy(p); }
+      if (k >= 1) { trans = null; prevFocus.copy(p); impactCam = null; }
       prevSunLon = state.sunLon;
     } else {
       const delta = p.clone().sub(prevFocus);
@@ -1190,7 +1519,7 @@
   function nearestBody(x, y, maxPx) {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     let best = null, bd = maxPx;
-    const cands = [...BODIES.filter(b => !b.gone), ...Object.values(moonSystems).flatMap(s => s.moons.filter(m => !m.lbl.hidden).map(m => m.body))];
+    const cands = [...BODIES.filter(b => !b.gone), ...Object.values(moonSystems).flatMap(s => s.moons.filter(m => !m.lbl.hidden).map(m => m.body)), ...COMETS.filter(c => !c.gone), ...(sl9.gone ? [] : [sl9])];
     for (const b of cands) {
       pickV.copy(b.root.position).project(camera);
       if (pickV.z >= 1) continue;
@@ -1245,6 +1574,8 @@
   const detailEl = $('detail');
   function renderDetail() {
     const id = focusId || 'earth', b = byId[id], s = state[id];
+    if (b.isSL9) { renderSL9Detail(); return; }
+    if (b.isComet) { renderCometDetail(b); return; }
     if (b.gone) { detailEl.innerHTML = `<div><div class="kind">${b.kind}</div></div><h2>${b.name}</h2><p class="fine" style="padding:0">Gone in this what-if. See the What if… panel for what happened.</p>`; return; }
     if (b.isMoon) { renderMoonDetail(b); return; }
     const rot = 360 / Math.abs(b.Wd), retro = b.retro ?? b.Wd < 0;
@@ -1335,7 +1666,7 @@
     renderTrip();
   }
   function renderSpeed() {
-    $('speedLbl').textContent = (dir < 0 ? '−' : '') + SPEEDS[speedIdx].l;
+    $('speedLbl').textContent = impactSlowLbl ? 'Slow motion' : (dir < 0 ? '−' : '') + SPEEDS[speedIdx].l;
     $('pause').textContent = paused ? 'Play' : 'Pause';
     $('pause').setAttribute('aria-pressed', String(paused));
     $('rev').setAttribute('aria-pressed', String(dir < 0));
@@ -1360,7 +1691,8 @@
   const INNER = new Set(['mercury', 'venus', 'earth', 'moon', 'mars']);
   $('orbList').innerHTML = BODIES.filter(b => b.el || b.id === 'moon').map(b =>
     `<li><label><input type="checkbox" data-id="${b.id}"><i style="background:${b.color}"></i>${b.name}</label>` +
-    (moonSystems[b.id] ? `<label class="sub"><input type="checkbox" data-id="${b.id}:moons">moons</label>` : '') + '</li>').join('');
+    (moonSystems[b.id] ? `<label class="sub"><input type="checkbox" data-id="${b.id}:moons">moons</label>` : '') + '</li>').join('') +
+    '<li><label><input type="checkbox" data-id="comets"><i style="background:#bfe3ff"></i>Comets</label></li>';
   const orbInputs = [...$('orbList').querySelectorAll('input')];
   function applyOrbits() {
     for (const c of orbitGroup.children) c.visible = orbShown(c.userData.id);
@@ -1447,13 +1779,133 @@
   $('eclList').addEventListener('click', e => { const b = e.target.closest('button'); if (b) gotoEclipse(ECLIPSES[+b.dataset.i]); });
   function toggleEcl(open) {
     if (open && galOn) setGalaxy(false);
-    if (open) toggleOrb(false);
+    if (open) { toggleOrb(false); if (!$('cometPop').hidden) toggleComets(false); }
     $('eclPop').hidden = !open; $('eclBtn').setAttribute('aria-expanded', String(open)); $('eclBtn').setAttribute('aria-pressed', String(open));
     alignLine.visible = open && !explain;
     lastEclKey = null; renderEclipses(); renderWhy();
   }
   $('eclBtn').addEventListener('click', () => toggleEcl($('eclPop').hidden));
   $('eclClose').addEventListener('click', () => toggleEcl(false));
+  // ---------- comets panel ----------
+  const yrs = d => d / 365.25;
+  const cometNums = (c, jd) => {
+    const st = c.st || { ...cometPV(cometSet(c, jd), jd), set: cometSet(c, jd) }, [e, q] = st.set;
+    const vinf = e > 1 ? Math.sqrt(MU_SUN * (e - 1) / q) * AU_KM / 86400 : 0;
+    return { ...st, e, q, vinf, P: e < 1 ? 2 * Math.PI / Math.sqrt(MU_SUN * ((1 - e) / q) ** 3) : Infinity, speed: Math.hypot(...st.v) * AU_KM / 86400 };
+  };
+  const shortDate = ms => new Date(ms).toISOString().slice(0, 10);
+  function renderCometDetail(c) {
+    const jd = simMs / 86400000 + 2440587.5, n = cometNums(c, jd), tpMs = jdToMs(n.set[5]), e = state.earth?.helio;
+    const rows = [
+      ['Designation', c.desig],
+      ['From Sun', fmtAU(n.r)],
+      ['From Earth', e ? fmtAU(Math.hypot(n.p[0] - e[0], n.p[1] - e[1], n.p[2] - e[2])) : '—'],
+      ['Speed', n.speed.toFixed(1) + ' km/s'],
+      [tpMs < simMs ? 'Closest to Sun (last)' : 'Closest to Sun (next)', `${shortDate(tpMs)}, ${n.q.toFixed(3)} AU`],
+      ['Orbit', n.e < 1 ? `Returns about every ${Math.round(yrs(n.P)).toLocaleString()} years` : n.vinf < 2 ? `Only just open: leaving at ${n.vinf.toFixed(2)} km/s, so it may never come back` : `Open (hyperbolic): it leaves the Solar System for good at ${n.vinf.toFixed(0)} km/s`],
+      ['Nucleus', c.size],
+      ['Tail', c.tail === 0 ? 'None was ever seen' : c.act > 0.02 ? 'Active: gas and dust stream away from the Sun' : 'None now: too far from the Sun (tails grow inside about 3 AU)'],
+    ];
+    detailEl.innerHTML = `<div><div class="kind">${focusId ? 'Following · ' : ''}${c.kind}</div></div><h2>${c.name}</h2>
+      <dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><p class="fine" style="padding:0">${c.fact}</p>`;
+  }
+  // One button per return inside the time range (Halley: 1835, 1910, 1986).
+  $('cometList').innerHTML = COMETS.map(c => {
+    const goes = c.el.map((s, k) => [k, jdToMs(s[5])]).filter(([, ms]) => ms >= MIN_MS && ms <= MAX_MS);
+    const label = ms => goes.length > 1 ? `Closest to Sun ${new Date(ms).getUTCFullYear()}` : 'Closest to Sun';
+    return `<li data-id="${c.id}"><div class="ct"><span class="dot" style="background:${c.color}"></span><b>${c.name}</b><span class="tag ${c.kind.startsWith('Inter') ? 'chg' : 'ok'}">${c.kind.startsWith('Inter') ? 'Interstellar' : 'Comet'}</span></div>
+      <div class="cmeta" data-live></div><p>${c.fact}</p>
+      <div class="seg">${goes.map(([k, ms]) => `<button data-go="${c.id}:${k}">${label(ms)}</button>`).join('')}<button data-follow="${c.id}">Follow</button></div></li>`;
+  }).join('');
+  // Shoemaker–Levy 9 (its own entry: it orbited Jupiter, not the Sun).
+  const SL9_FACT = 'Jupiter had captured this comet decades earlier. On 7 Jul 1992 it passed about 1.3 Jupiter radii from Jupiter\'s centre, inside the Roche limit, and tides tore it into about 20 pieces. Carolyn and Eugene Shoemaker and David Levy found the "string of pearls" in Mar 1993. From 16 to 22 Jul 1994 the pieces hit Jupiter one after another at about 60 km/s: the first collision between Solar System bodies ever watched. The biggest, G, left a dark spot about as wide as Earth.';
+  $('cometList').insertAdjacentHTML('beforeend', `<li data-id="sl9"><div class="ct"><span class="dot" style="background:${sl9.color}"></span><b>Shoemaker–Levy 9</b><span class="tag bad">Hit Jupiter</span></div>
+    <div class="cmeta" data-live></div><p>${SL9_FACT}</p>
+    <div class="seg"><button data-sl9="break">Break-up, 1992</button><button data-sl9="G">Watch G hit</button><button data-sl9="all">All 20 impacts</button><button data-follow="sl9">Follow</button></div></li>`);
+  const sl9Next = () => sl9.frags.find(fr => fr.ms > simMs);
+  const lightMin = () => { const j = state.jupiter?.helio, e = state.earth?.helio; return j && e ? Math.hypot(j[0] - e[0], j[1] - e[1], j[2] - e[2]) * 499.005 / 60 : 0; };
+  const hm = ms => new Date(ms).toISOString().slice(11, 16);
+  function sl9Status() {
+    const jd = simMs / 86400000 + 2440587.5, n = sl9.alive, hit = sl9.frags.filter(fr => fr.ms <= simMs).length;
+    if (fict.on) return 'Not part of the What if… simulation';
+    if (jd < SL9_START) return 'Orbiting Jupiter, not yet found (shown from 1988)';
+    if (!n) return `All ${sl9.frags.length} pieces hit Jupiter, 16–22 Jul 1994`;
+    const dist = sl9.lead.km, lead = `${(dist / 1e6).toFixed(dist < 1e6 ? 3 : 1)} million km (${(dist / byId.jupiter.R).toFixed(1)} Jupiter radii) from Jupiter`;
+    if (jd < SL9_BREAK) return `One comet, ${lead}`;
+    const nx = sl9Next();
+    return hit ? `${hit} of ${sl9.frags.length} pieces have hit · next: ${nx.name} at ${hm(nx.ms)} UTC` : `${n} pieces in a line, the first ${lead}`;
+  }
+  function renderSL9Detail() {
+    const nx = sl9Next(), L = lightMin();
+    const rows = [['Designation', 'D/1993 F2'], ['Now', sl9Status()]];
+    if (sl9.alive > 1) {
+      const ps = sl9.frags.filter(fr => fr.pk), span = Math.max(...ps.map(a => Math.max(...ps.map(b => Math.hypot(a.pk[0] - b.pk[0], a.pk[1] - b.pk[1], a.pk[2] - b.pk[2])))));
+      rows.push(['Train length', `${Math.round(span).toLocaleString()} km`]);
+    }
+    if (nx && !fict.on) rows.push(['Next impact', `${nx.name}: ${new Date(nx.ms).toISOString().slice(0, 16).replace('T', ' ')} UTC at Jupiter, seen from Earth ${Math.round(L)} min later (light travel time)`]);
+    rows.push(['Impact sites', 'All near 44° south, spread round in longitude because Jupiter turned between hits']);
+    rows.push(['Orbit', 'Around Jupiter, once every 2 years or so, out to about 50 million km']);
+    detailEl.innerHTML = `<div><div class="kind">${focusId ? 'Following · ' : ''}${sl9.kind}</div></div><h2>Shoemaker–Levy 9</h2>
+      <dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><p class="fine" style="padding:0">${SL9_FACT}</p>`;
+  }
+  // Jumps: the break-up; 10 minutes before G at 1 min/s, looking at the impact site; the whole week at 1 hour/s.
+  function gotoSL9(what) {
+    if (skyOn) setSky(false);
+    if (explain) setExplain(false);
+    dir = 1; paused = false;
+    if (what === 'break') { // close to Jupiter, looking at the closest-approach point with the Sun behind the camera
+      simMs = jdToMs(SL9_BREAK - 0.5); speedIdx = 2; update(simMs);
+      const dP = eclToScene(sl9Ref(SL9_BREAK)).normalize(), sunward = byId.jupiter.root.position.clone().normalize().negate();
+      impactCam = { id: 'jupiter', off: dP.add(sunward).add(new THREE.Vector3(0, 0.5, 0)).normalize().multiplyScalar(sceneRadius(byId.jupiter) * 6 * Math.max(1, 0.85 / camera.aspect)) };
+      select('jupiter');
+    }
+    else if (what === 'all') { simMs = Date.UTC(1994, 6, 16, 16); speedIdx = 2; select('jupiter'); }
+    else {
+      const fr = sl9.frags.find(f => f.name === what); simMs = fr.ms - 10 * 60000; speedIdx = 1;
+      update(simMs); // also places the impact sites (fr.dirE)
+      // The sites were just past the dawn line (on the night side), so look from between the site and the Sun.
+      const n = eclToScene(fr.dirE).normalize(), sunward = byId.jupiter.root.position.clone().normalize().negate();
+      impactCam = { id: 'jupiter', off: n.add(sunward.multiplyScalar(0.8)).add(new THREE.Vector3(0, -0.2, 0)).normalize().multiplyScalar(sceneRadius(byId.jupiter) * 3.4 * Math.max(1, 0.85 / camera.aspect)) };
+      select('jupiter');
+    }
+    renderSpeed(); update(simMs); renderClock(); renderComets(true);
+    if (narrow.matches) toggleComets(false);
+  }
+  let cometsLast = 0;
+  function renderComets(force) {
+    if ($('cometPop').hidden) return;
+    const now = performance.now(); if (!force && now - cometsLast < 400) return; cometsLast = now;
+    const jd = simMs / 86400000 + 2440587.5;
+    for (const li of $('cometList').children) {
+      if (li.dataset.id === 'sl9') { li.querySelector('[data-live]').textContent = sl9Status(); li.classList.toggle('on', focusId === 'sl9'); continue; }
+      const c = byId[li.dataset.id], n = cometNums(c, jd), tpMs = jdToMs(n.set[5]), days = (simMs - tpMs) / 86400000;
+      const when = Math.abs(days) < 1 ? 'at its closest to the Sun now' : `${Math.abs(days) < 730 ? Math.round(Math.abs(days)) + ' days' : Math.round(Math.abs(yrs(days))) + ' years'} ${days < 0 ? 'before' : 'after'} its closest pass (${shortDate(tpMs)})`;
+      li.querySelector('[data-live]').textContent = `${fmtAU(n.r)} from the Sun · ${n.speed.toFixed(1)} km/s · ${when}`;
+      li.classList.toggle('on', focusId === c.id);
+    }
+  }
+  // Jump to 20 days before perihelion at 1 day/s, following the comet, so its tails swing round as it passes the Sun.
+  function gotoComet(c, k) {
+    if (skyOn) setSky(false);
+    if (explain) setExplain(false);
+    simMs = Math.min(MAX_MS, Math.max(MIN_MS, jdToMs(c.el[k][5]) - 20 * 86400000));
+    speedIdx = 4; dir = 1; paused = false; renderSpeed();
+    update(simMs); select(c.id); renderClock(); renderComets(true);
+    if (narrow.matches) toggleComets(false);
+  }
+  $('cometList').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.go) { const [id, k] = b.dataset.go.split(':'); gotoComet(byId[id], +k); }
+    else if (b.dataset.sl9) gotoSL9(b.dataset.sl9);
+    else if (b.dataset.follow) { select(b.dataset.follow); renderComets(true); if (narrow.matches) toggleComets(false); }
+  });
+  function toggleComets(open) {
+    if (open) { if (!$('eclPop').hidden) toggleEcl(false); toggleOrb(false); if (galOn) toggleGalCard(false); }
+    $('cometPop').hidden = !open; $('cometBtn').setAttribute('aria-expanded', String(open)); $('cometBtn').setAttribute('aria-pressed', String(open));
+    renderComets(true);
+  }
+  $('cometBtn').addEventListener('click', () => toggleComets($('cometPop').hidden));
+  $('cometClose').addEventListener('click', () => toggleComets(false));
   // ---------- "why not every month?" ----------
   const NS = v => `${Math.abs(v).toFixed(1)}° ${v >= 0 ? 'north' : 'south'}`;
   const dayOf = ms => ms / 86400000 + 2440587.5 - J2000;
@@ -1885,7 +2337,7 @@
   $('galBtnOpen').addEventListener('click', () => setGalaxy(!galOn));
   $('galClose').addEventListener('click', () => setGalaxy(false));
   // Phones and tablets: hide the card to see the view; the Galaxy ▴ button brings it back.
-  function toggleGalCard(open) { $('galPop').hidden = !open; $('galChip').hidden = open || !galOn; }
+  function toggleGalCard(open) { if (open && !$('cometPop').hidden) toggleComets(false); $('galPop').hidden = !open; $('galChip').hidden = open || !galOn; }
   $('galHide').addEventListener('click', () => toggleGalCard(false));
   $('galChip').addEventListener('click', () => toggleGalCard(true));
 
@@ -1984,6 +2436,7 @@
     return P;
   }
   function fictBuild() {
+    impactClear();
     const ids = ['sun', ...BODIES.filter(b => b.el).map(b => b.id), 'moon', ...Object.values(moonSystems).flatMap(s => s.moons.map(m => m.body.id)), 'rogue'];
     const n = ids.length, h = 0.002, P0 = fictSnapshot(simMs), Pm = fictSnapshot(simMs - h * 86400000), Pp = fictSnapshot(simMs + h * 86400000);
     F = { n, ids, gm: new Float64Array(n), R: new Float64Array(n), x: new Float64Array(3 * n), v: new Float64Array(3 * n), a: new Float64Array(3 * n),
@@ -2032,7 +2485,7 @@
   const fictRefresh = () => { fictClassify(); fictRoche(); fictAccel(); };
   // Accelerations among the heavy bodies (everything that isn't a light moon).
   function fictAccel() {
-    const { n, x, a, gm, alive, R, light } = F; a.fill(0);
+    const { n, x, v, a, gm, alive, R, light } = F; a.fill(0);
     let t2 = Infinity, hit = null;
     for (let i = 0; i < n; i++) {
       if (!alive[i] || light[i]) continue;
@@ -2045,6 +2498,7 @@
         a[j3] -= gm[i] * dx * k; a[j3 + 1] -= gm[i] * dy * k; a[j3 + 2] -= gm[i] * dz * k;
         const s = gm[i] + gm[j]; if (s > 0) { const t = r2 * r / s; if (t < t2) t2 = t; }
         if (r < R[i] + R[j] && !hit) hit = [i, j];
+        else if (r < 50 * (R[i] + R[j])) fictCourse(i, j, dx, dy, dz, v[j3] - v[i3], v[j3 + 1] - v[i3 + 1], v[j3 + 2] - v[i3 + 2], r);
         if (r < F.roche[i * n + j]) fictRocheNote(i, j);
       }
     }
@@ -2079,6 +2533,7 @@
       const k3 = 3 * nm;
       mr[k3] = rx; mr[k3 + 1] = ry; mr[k3 + 2] = rz;
       mv[k3] = v[i3] - v[h3]; mv[k3 + 1] = v[i3 + 1] - v[h3 + 1]; mv[k3 + 2] = v[i3 + 2] - v[h3 + 2];
+      if (rr2 < 2500 * (R[i] + R[h]) ** 2) fictCourse(h, i, rx, ry, rz, mv[k3], mv[k3 + 1], mv[k3 + 2], Math.sqrt(rr2));
       ap[k3] = ax; ap[k3 + 1] = ay; ap[k3 + 2] = az; mlist[nm++] = i;
     }
     for (let k = 0; k < 3 * n; k++) { v[k] += a[k] * H / 2; x[k] += v[k] * H; }
@@ -2132,11 +2587,14 @@
   function fictAdvance(days) {
     let left = Math.abs(days), steps = 0;
     const s = Math.sign(days), t0 = performance.now();
-    while (left > 1e-9 && (steps & 15 || performance.now() - t0 < FICT_BUDGET)) {
+    F.inc = null; F.brk = false; IMP.day0 = F.day;
+    while (left > 1e-9 && !F.brk && (steps & 15 || performance.now() - t0 < FICT_BUDGET)) {
       const h = Math.min(left, 2 ** Math.min(1, Math.floor(Math.log2(Math.max(2e-5, 0.05 * F.tdyn)))));
       fictStep(h * s); left -= h; steps++;
+      // A new collision course: stop here, so the frame loop can slow time down before it happens.
+      if (F.inc && impactWanted(F.inc)) F.brk = true;
     }
-    F.lag = left > 1e-9;
+    F.lag = left > 1e-9 && !F.brk;
     return (Math.abs(days) - left) * s;
   }
   const fictName = i => fictBody(F.ids[i]).name;
@@ -2144,9 +2602,11 @@
   let fictEventsDirty = true;
   function fictMerge(i, j) {
     const { gm, v, alive } = F, [big, small] = gm[i] >= gm[j] ? [i, j] : [j, i], M = gm[big] + gm[small];
+    const imp = impactRecord(big, small); // before the merge changes anything
     if (M > 0) for (let k = 0; k < 3; k++) v[3 * big + k] = (gm[big] * v[3 * big + k] + gm[small] * v[3 * small + k]) / M;
     gm[big] = M; alive[small] = 0; v.fill(0, 3 * small, 3 * small + 3);
     fictEvent(`${fictName(small)} ${gm[big] > 1e-6 ? 'fell into' : 'crashed into'} ${fictName(big)}`);
+    F.events[0].imp = imp; F.brk = true;
     fictRefresh();
   }
   const fictPrimary = () => { let p = -1; for (let i = 0; i < F.n; i++) if (F.alive[i] && (p < 0 || F.gm[i] > F.gm[p])) p = i; return p; };
@@ -2229,6 +2689,7 @@
       return pos[i];
     };
     for (let i = 0; i < n; i++) if (alive[i]) place(i);
+    impactApproach(pos);
 
     for (let i = 0; i < n; i++) {
       const id = ids[i], b = fictBody(id), live = !!alive[i];
@@ -2269,6 +2730,362 @@
     GHOSTS.forEach((b, k) => { const h = heliocentric(b.el, T); const s = eclToScene(h.p, distScale(h.r) / h.r); gpa.setXYZ(k, s.x, s.y, s.z); });
     gpa.needsUpdate = true;
   }
+  // ----- impacts: a slow-motion approach, the effects, and the impact card -----
+  // The simulation itself only merges the two bodies (momentum kept). This part is about showing it: when a pair is on
+  // a collision course, time slows down and the camera flies to the target. The hit gets a flash, fireball, shockwave,
+  // debris and a lasting scar, all scaled by the real impact energy, and the card gives the numbers.
+  const G_SI = 6.6743e-11, MT_J = 4.184e15, L_SUN = 3.828e26, M_SUN = 1.989e30;
+  const GAS = new Set(['jupiter', 'saturn', 'uranus', 'neptune']);
+  const IMP = { slow: null, pending: [], list: [], shows: [], scars: [], falling: [], ignore: new Map(), snap: null, day0: 0, cardIdx: -1 };
+  const pairKey = (i, j) => Math.min(i, j) * F.n + Math.max(i, j);
+  const impactWanted = inc => !IMP.slow && dir > 0 && !(IMP.ignore.get(pairKey(inc.i, inc.j)) > performance.now());
+  // Called from the integrator for close pairs (r = j − i, u = its rate of change): their two-body relative orbit
+  // dips below the sum of the radii while they're closing, so they will hit. Keeps the closest such pair in F.inc.
+  function fictCourse(i, j, rx, ry, rz, ux, uy, uz, r) {
+    if (rx * ux + ry * uy + rz * uz >= 0) return;
+    const mu = F.gm[i] + F.gm[j], Rs = F.R[i] + F.R[j], u2 = ux * ux + uy * uy + uz * uz;
+    const hx = ry * uz - rz * uy, hy = rz * ux - rx * uz, hz = rx * uy - ry * ux, h2 = hx * hx + hy * hy + hz * hz;
+    let q;
+    if (mu > 0) { const e = Math.sqrt(Math.max(0, 1 + 2 * (u2 / 2 - mu / r) * h2 / (mu * mu))); q = h2 / mu / (1 + e); }
+    else q = u2 > 0 ? Math.sqrt(h2 / u2) : r;
+    if (q < Rs && (!F.inc || r / Rs < F.inc.k)) F.inc = { i, j, k: r / Rs };
+  }
+  // The moment of contact, recorded by fictMerge before the merge changes anything.
+  function impactRecord(big, small) {
+    const { x, v, gm, R } = F, d = [0, 1, 2].map(k => x[3 * small + k] - x[3 * big + k]), u = [0, 1, 2].map(k => v[3 * small + k] - v[3 * big + k]);
+    const r = Math.hypot(...d) || 1, us = Math.hypot(...u), vKm = us * AU_KM / 86400;
+    const kg = g => g / KM3S2 * 1e9 / G_SI; // AU³/day² → km³/s² → m³/s² → kg
+    const mt = kg(gm[big]), mi = kg(gm[small]);
+    const rec = { idx: IMP.list.length + IMP.pending.length, tId: F.ids[big], iId: F.ids[small], ms: simMs + (F.day - IMP.day0) * 86400000,
+      dirE: d.map(c => c / r), vKm, angle: us > 0 ? Math.asin(Math.min(1, Math.abs(vdot(d, u)) / (r * us))) : Math.PI / 2,
+      mt, mi, E: mt + mi > 0 ? 0.5 * mt * mi / (mt + mi) * (vKm * 1e3) ** 2 : 0, Rt: R[big] * AU_KM, Ri: R[small] * AU_KM, star: gm[big] > 1e-6 };
+    const s = IMP.slow;
+    if (s && s.phase === 'in' && s.key === pairKey(big, small)) { rec.snap = IMP.snap; rec.frag = !!s.frag; s.hit = rec; }
+    IMP.pending.push(rec);
+    return rec.idx;
+  }
+  // What the hit means physically: energy, the target's binding energy, crater size (Collins, Melosh & Marcus 2005).
+  function impactNumbers(rec) {
+    const kind = rec.star ? 'star' : GAS.has(rec.tId) ? 'gas' : 'rock', EMt = rec.E / MT_J;
+    const ratio = rec.E / (0.6 * G_SI * rec.mt ** 2 / (rec.Rt * 1e3)); // vs the energy holding the target together
+    let craterKm = null;
+    if (kind === 'rock' && rec.mi > 0 && rec.Ri > 0) {
+      const vol = Rk => 4 / 3 * Math.PI * (Rk * 1e3) ** 3, g = G_SI * rec.mt / (rec.Rt * 1e3) ** 2;
+      const Dtc = 1.161 * Math.cbrt((rec.mi / vol(rec.Ri)) / (rec.mt / vol(rec.Rt))) * (2 * rec.Ri * 1e3) ** 0.78 * (rec.vKm * 1e3) ** 0.44 * g ** -0.22 * Math.cbrt(Math.max(0.1, Math.sin(rec.angle)));
+      const Dc = 3200 * 9.81 / g; // simple → complex craters (3.2 km on Earth)
+      craterKm = (1.25 * Dtc < Dc ? 1.25 * Dtc : 1.17 * Dtc ** 1.13 / Dc ** 0.13) / 1e3;
+    }
+    const global = kind === 'rock' && (ratio > 0.01 || craterKm > rec.Rt);
+    return { kind, EMt, ratio, craterKm, global, sev: Math.min(1, Math.max(0.1, (Math.log10(Math.max(EMt, 1e-3)) - 2) / 13)) };
+  }
+  const SUP = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+  function fmtBig(x) {
+    if (!isFinite(x) || x <= 0) return '0';
+    if (x >= 0.01 && x < 1e5) return x < 10 ? String(+x.toPrecision(2)) : Math.round(x).toLocaleString();
+    const e = Math.floor(Math.log10(x));
+    return `${(x / 10 ** e).toFixed(1)} × 10${[...String(e)].map(c => SUP[c]).join('')}`;
+  }
+  const fmtSpan = s => s < 120 ? `${fmtBig(s)} seconds` : s < 7200 ? `${fmtBig(s / 60)} minutes` : s < 172800 ? `${fmtBig(s / 3600)} hours` : s < 6.3e7 ? `${fmtBig(s / 86400)} days` : `${fmtBig(s / 3.156e7)} years`;
+  function impactMeans(rec) {
+    const N = rec.num, tn = fictBody(rec.tId).name, earth = rec.tId === 'earth', E = N.EMt;
+    if (N.kind === 'star') return `${tn} simply swallows it, and its mass grows by ${fmtBig(rec.mi / rec.mt * 100)}%.`;
+    if (N.ratio >= 1) return `Enough energy to shatter ${tn}. The pieces would probably pull back together into a new, molten world, like the giant impact that made our Moon. The simulation simply merges the two.`;
+    if (N.kind === 'gas') {
+      const sl9 = 'the biggest piece of comet Shoemaker–Levy 9, which hit Jupiter in 1994, was about 6 million megatons';
+      if (N.ratio > 0.001) return `Enough to heat ${tn}'s whole atmosphere and puff it up for a long time. For scale, ${sl9}.`;
+      if (E > 1e9) return `A fireball far bigger than Earth erupts from ${tn}'s clouds, and dark debris spreads around the planet and fades over weeks. For scale, ${sl9}.`;
+      return `A fireball bursts high in ${tn}'s clouds and leaves dark debris spots that fade over weeks, like the pieces of comet Shoemaker–Levy 9 that hit Jupiter in 1994 (the biggest was about 6 million megatons).`;
+    }
+    if (N.global) return `The whole surface would melt into an ocean of magma${earth ? ', the oceans would boil away and all life would end' : ''}. A solid crust would take thousands of years to form again (here the glow fades faster, so you can watch).`;
+    if (E >= 1e7) return earth ? 'A mass extinction: global firestorms, then years of darkness and cold. The impact that ended the dinosaurs was about 100 million megatons.' : `A giant basin, with debris spread over the whole of ${tn}.`;
+    if (E >= 1e4) return earth ? 'Devastation across a continent, and a few years of global cooling from the dust.' : `A large crater, with debris thrown far across ${tn}.`;
+    if (E >= 10) return earth ? 'Regional devastation, like the Tunguska blast of 1908 (about 12 megatons) or bigger.' : 'A crater several kilometres across or more.';
+    return earth ? 'Local damage. A body this small might even burst in the air before it reached the ground.' : 'A small crater.';
+  }
+  function showImpactCard(idx) {
+    const rec = IMP.list[idx]; if (!rec || !fict.on) return;
+    IMP.cardIdx = idx;
+    const N = rec.num, tn = fictBody(rec.tId).name, inm = fictBody(rec.iId).name, ang = Math.round(rec.angle / DEG);
+    const cmp = N.EMt < 1e5 ? `about ${fmtBig(N.EMt / 0.015)} Hiroshima bombs` : N.EMt < 1e8 ? `${fmtBig(N.EMt / 1e6)}% of the dinosaur-killing impact` : `${fmtBig(N.EMt / 1e8)} times the dinosaur-killing impact`;
+    const rows = [
+      ['Speed', `${rec.vKm.toFixed(rec.vKm < 10 ? 2 : 1)} km/s, ${ang}° from horizontal${ang >= 80 ? ' (head-on)' : ang <= 15 ? ' (grazing)' : ''}`],
+      ['Mass', `${inm} is ${fmtBig(rec.mi / rec.mt * 100)}% of ${tn}'s mass`],
+      ['Energy', `${fmtBig(N.EMt)} megatons of TNT, ${cmp}`],
+    ];
+    if (N.kind === 'rock') rows.push(['Crater', N.global ? 'None: the whole surface melts' : `About ${fmtBig(N.craterKm)} km across`]);
+    if (N.kind === 'star') rows.push(['Compared', `What ${tn} gives out as light in ${fmtSpan(rec.E / (L_SUN * (rec.mt / M_SUN) ** 4))}`]);
+    if (rec.frag) rows.push(['Before it hit', `It came inside ${tn}'s Roche limit, where tides pull a body apart, so it's drawn as a string of pieces (the simulation keeps it whole)`]);
+    $('impWhen').textContent = `Impact · ${new Date(rec.ms).toISOString().slice(0, 16).replace('T', ' ')} UTC`;
+    $('impTitle').textContent = `${inm} hits ${tn}`;
+    $('impNums').innerHTML = rows.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
+    $('impMeans').textContent = impactMeans(rec);
+    $('impReplay').hidden = !rec.snap;
+    $('impCard').hidden = false;
+  }
+  // Rewinding for Replay: the whole simulation state at the moment the collision course was spotted.
+  function fictSave() {
+    return { ms: simMs, x: F.x.slice(), v: F.v.slice(), gm: F.gm.slice(), alive: F.alive.slice(), day: F.day, steps: F.steps,
+      mult: F.mult.map(m => ({ ...m })), events: F.events.map(e => ({ ...e })), roche: new Set(F.rocheSeen), prevHost: F.prevHost.slice(),
+      trails: F.trails.map(t => ({ au: t.au.slice(), last: t.last })), scars: IMP.scars.length, list: IMP.list.length };
+  }
+  function fictRestore(sn) {
+    impactEndSlow(); IMP.shows.forEach(disposeShow); IMP.falling.forEach(fr => fr.pieces.forEach(p => scene.remove(p.mesh)));
+    for (const sc of IMP.scars.splice(sn.scars)) { sc.mesh.parent?.remove(sc.mesh); sc.mesh.material.dispose(); }
+    Object.assign(IMP, { shows: [], falling: [], pending: [], slow: null }); IMP.list.length = sn.list; IMP.ignore.clear();
+    simMs = sn.ms; F.x.set(sn.x); F.v.set(sn.v); F.gm.set(sn.gm); F.alive.set(sn.alive); F.day = sn.day; F.steps = sn.steps;
+    F.mult = sn.mult.map(m => ({ ...m })); F.events = sn.events.map(e => ({ ...e })); F.rocheSeen = new Set(sn.roche); F.prevHost = sn.prevHost.slice();
+    sn.trails.forEach((t, k) => { const tr = F.trails[k]; tr.au = t.au.slice(); tr.last = t.last; trailDraw(tr); });
+    fictRefresh(); fictEventsDirty = true;
+  }
+  // Fly to the target, side-on to the incoming body.
+  function impactFocus(i, j) {
+    const tb = fictBody(F.ids[i]); if (tb === rogue) return;
+    const nW = eclToScene([0, 1, 2].map(k => F.x[3 * j + k] - F.x[3 * i + k])).normalize(), up = new THREE.Vector3(0, 1, 0);
+    const side = new THREE.Vector3().crossVectors(nW, up); if (side.lengthSq() < 1e-6) side.set(1, 0, 0); side.normalize();
+    const Rt = fictSceneR(tb), D = Math.max(tb.root.position.distanceTo(fictBody(F.ids[j]).root.position), Rt * 2);
+    impactCam = { id: tb.id, off: nW.multiplyScalar(0.5).add(side.multiplyScalar(0.85)).add(up.multiplyScalar(0.3)).normalize().multiplyScalar(Math.max(Rt * 6, D * 1.3 + Rt * 2) * Math.max(1, 0.85 / camera.aspect)) }; // portrait: back off to fit both
+    select(tb.id);
+    if (PHONE.matches) toggleFictPop(false); // phones: clear the view
+  }
+  // While closing in, the impactor is drawn so its gap to the target shrinks with the true gap and they touch exactly at
+  // contact (the exaggerated display sizes would otherwise swallow it early).
+  function impactApproach(pos) {
+    const s = IMP.slow;
+    if (!s || s.phase !== 'in' || !F.alive[s.i] || !F.alive[s.j]) return;
+    const { x, R, n, host, alive } = F, d = [0, 1, 2].map(k => x[3 * s.j + k] - x[3 * s.i + k]), r = Math.hypot(...d), g = Math.max(0, r - R[s.i] - R[s.j]);
+    const Rt = fictSceneR(fictBody(F.ids[s.i])), Ri = fictSceneR(fictBody(F.ids[s.j]));
+    if (s.g0 == null) { s.g0 = g; s.D0 = Math.max(pos[s.j].distanceTo(pos[s.i]), (Rt + Ri) * 1.6); }
+    const dirW = eclToScene(d).normalize(), D = Rt + Ri + (s.D0 - Rt - Ri) * (s.g0 > 0 ? g / s.g0 : 0);
+    const np = pos[s.i].clone().addScaledVector(dirW, D), delta = np.clone().sub(pos[s.j]);
+    pos[s.j] = np;
+    for (let k = 0; k < n; k++) if (alive[k] && host[k] === s.j && pos[k]) pos[k].add(delta);
+    Object.assign(s, { D, dirW, Rt, Ri });
+    if (!s.frag && r < F.roche[s.i * n + s.j] && !(F.gm[s.j] > 1e-6)) s.frag = { Dent: D, meshes: null };
+  }
+  // Slow motion: caps how many days a frame may cover. Approaching: the rest of the approach takes ~2.5 s, and the
+  // last stretch (one radius-sum) at least 0.35 s. After the hit: hold for 3.5 s, then ease back over 2.5 s.
+  function impactCap(days, dt) {
+    const s = IMP.slow; if (!s || dt <= 0 || !days) return days;
+    const user = Math.abs(days) / dt;
+    let rate;
+    if (s.phase === 'in') {
+      if (dir < 0 || !F.alive[s.i] || !F.alive[s.j]) { impactEndSlow(); return days; }
+      const { x, v } = F, d = [0, 1, 2].map(k => x[3 * s.j + k] - x[3 * s.i + k]), u = [0, 1, 2].map(k => v[3 * s.j + k] - v[3 * s.i + k]);
+      const r = Math.hypot(...d), rd = vdot(d, u) / r, Rs = F.R[s.i] + F.R[s.j];
+      if (rd >= 0) { IMP.ignore.set(s.key, performance.now() + 10000); impactEndSlow(); return days; } // a near miss after all
+      const vc = Math.sqrt(vdot(u, u) + 2 * (F.gm[s.i] + F.gm[s.j]) * Math.max(0, 1 / Rs - 1 / r)); // speed at contact
+      const want = Math.max(0, r - Rs) / ((vc - rd) / 2) / s.left;
+      if (want < user) s.left = Math.max(0.35, s.left - dt); // the countdown only runs once it's actually slowing things
+      rate = s.rate = Math.min(user, Math.max(want, Rs / vc / 0.35));
+    } else {
+      const t = (performance.now() - s.tHit) / 1000;
+      if (t > 6) { IMP.slow = null; return days; }
+      rate = t < 3.5 ? s.rate : s.rate * Math.max(1, user / s.rate) ** ((t - 3.5) / 2.5);
+    }
+    s.capping = rate < user * 0.98; // for the "Slow motion" label
+    return Math.sign(days) * Math.min(Math.abs(days), rate * dt);
+  }
+  function impactEndSlow() {
+    const s = IMP.slow;
+    if (s?.frag?.meshes) for (const m of s.frag.meshes) { scene.remove(m); m.material.dispose(); }
+    IMP.slow = null;
+  }
+  // Once per frame after the simulation step: start slow motion for a new collision course, and handle hits.
+  function impactSim() {
+    if (F.inc && !paused && impactWanted(F.inc)) {
+      let { i, j } = F.inc; if (F.gm[j] > F.gm[i]) [i, j] = [j, i];
+      if (F.alive[i] && F.alive[j]) {
+        IMP.snap = fictSave();
+        IMP.slow = { i, j, key: pairKey(i, j), phase: 'in', left: 2.5, g0: null };
+        impactFocus(i, j);
+      }
+    }
+    F.inc = null;
+    for (const rec of IMP.pending.splice(0)) impactHit(rec);
+  }
+  function impactHit(rec) {
+    IMP.list[rec.idx] = rec; rec.num = impactNumbers(rec); fictEventsDirty = true;
+    const tb = fictBody(rec.tId), s = IMP.slow, nW = eclToScene(rec.dirE).normalize(), N = rec.num;
+    impactShow(tb, nW, N, false); impactScars(tb, nW, N, rec.ms, false);
+    const floor = (rec.Rt + rec.Ri) / Math.max(rec.vKm, 0.01) / 0.35 / 86400; // days per second
+    if (s && s.hit === rec) {
+      if (s.frag?.meshes) { // the lead piece hit; the rest of the string follows
+        const [lead, ...rest] = s.frag.meshes; scene.remove(lead); lead.material.dispose();
+        IMP.falling.push({ tb, nW, N, ms: rec.ms, spread: s.frag.spread, D: s.D, v: Math.max(s.vD || 0, s.frag.spread * rest.length / 2.5), pieces: rest.map((mesh, k) => ({ mesh, k: k + 1 })), p1: s.frag.p1, p2: s.frag.p2, Ri: s.Ri });
+        s.frag.meshes = null;
+      }
+      Object.assign(s, { phase: 'out', tHit: performance.now(), rate: s.rate || floor });
+    } else {
+      impactEndSlow();
+      IMP.slow = { phase: 'out', tHit: performance.now(), rate: floor, key: -1 };
+      if (focusId !== tb.id && tb !== rogue) { const i = F.ids.indexOf(rec.tId), j = F.ids.indexOf(rec.iId); impactFocus(i, j); }
+    }
+    // Let the effects play before the card covers part of the view (a bit longer on phones, where it's a big sheet).
+    setTimeout(() => { if (IMP.list[rec.idx] === rec) showImpactCard(rec.idx); }, PHONE.matches ? 2600 : 1800);
+  }
+  // ----- the effects -----
+  const IMP_FLASH = radialTex([[0, 'rgba(255,255,255,1)'], [0.18, 'rgba(255,244,214,0.85)'], [0.45, 'rgba(255,200,130,0.25)'], [1, 'rgba(255,170,90,0)']]);
+  const IMP_FIRE = radialTex([[0, 'rgba(255,236,170,1)'], [0.3, 'rgba(255,150,60,0.8)'], [0.65, 'rgba(170,60,25,0.3)'], [1, 'rgba(90,25,10,0)']]);
+  // A sphere shell coloured by angle from a point on the surface: a disc (scar, glow), a ring (shockwave) or rays.
+  const shellGeo = new THREE.SphereGeometry(1, 64, 32);
+  // A basic material patched in onBeforeCompile, so it keeps three.js's logarithmic depth like the planets do.
+  function shellMat(o) {
+    const u = { uN: { value: o.n.clone() }, uColor: { value: new THREE.Color(o.color) }, uAng: { value: o.ang }, uW: { value: o.w || 0.05 }, uAlpha: { value: o.alpha ?? 1 }, uMode: { value: o.mode || 0 } };
+    const mat = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, blending: o.add ? THREE.AdditiveBlending : THREE.NormalBlending });
+    mat.userData.u = u;
+    mat.onBeforeCompile = sh => {
+      Object.assign(sh.uniforms, u);
+      sh.vertexShader = 'varying vec3 vShellP;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvShellP = normalize(position);');
+      sh.fragmentShader = 'varying vec3 vShellP; uniform vec3 uN; uniform vec3 uColor; uniform float uAng; uniform float uW; uniform float uAlpha; uniform float uMode;\n' +
+        sh.fragmentShader.replace('#include <dithering_fragment>', `#include <dithering_fragment>
+  vec3 p = normalize(vShellP);
+  float a = acos(clamp(dot(p, uN), -1.0, 1.0)), k;
+  if (uMode < 0.5) k = 1.0 - smoothstep(uAng * 0.55, uAng, a);
+  else if (uMode < 1.5) k = exp(-pow((a - uAng) / uW, 2.0));
+  else {
+    vec3 t1 = normalize(cross(uN, abs(uN.y) < 0.9 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0))), t2 = cross(uN, t1);
+    float ph = atan(dot(p, t2), dot(p, t1));
+    k = pow(abs(sin(ph * 6.0 + 1.7 * sin(ph * 3.0))), 8.0) * smoothstep(uAng * 0.6, uAng, a) * (1.0 - smoothstep(uAng, uAng * 4.0, a));
+  }
+  gl_FragColor = vec4(uColor, k * uAlpha);`);
+    };
+    return mat;
+  }
+  const anchorOf = b => b === rogue ? rogue.root : b.isMoon ? b.m.mesh : b.spin; // turns with the body, radius 1
+  function addScar(tb, nW, ang, color, add, tau, ms, mode, alpha = 1) {
+    const anchor = anchorOf(tb), nL = nW.clone().applyQuaternion(anchor.getWorldQuaternion(new THREE.Quaternion()).invert());
+    const mesh = new THREE.Mesh(shellGeo, shellMat({ n: nL, color, ang, mode, add, alpha }));
+    mesh.scale.setScalar(1.02); mesh.renderOrder = 2 + IMP.scars.length; anchor.add(mesh);
+    IMP.scars.push({ mesh, ms, tau, alpha });
+  }
+  // Scars last in simulated time (days): craters stay, glows and gas-giant spots fade.
+  function impactScars(tb, nW, N, ms, mini) {
+    const k = mini ? 0.5 : 1;
+    if (N.kind === 'star') addScar(tb, nW, (0.05 + 0.15 * N.sev) * k, '#fff2c0', true, 0.3, ms);
+    else if (N.kind === 'gas') addScar(tb, nW, (0.04 + 0.2 * N.sev) * k, '#24160e', false, 60, ms, 0, 0.85);
+    else if (N.global && !mini) addScar(tb, nW, 4, '#ff5a1a', true, 20000, ms, 0, 0.9);
+    else {
+      const a = Math.max(0.03, Math.min(1.2, (N.craterKm || 0) / 2 / tb.R)) * k;
+      addScar(tb, nW, a * 1.3, '#e8dcc4', false, Infinity, ms, 2, 0.4); // bright rays
+      addScar(tb, nW, a, '#120c08', false, Infinity, ms, 0, 0.85);       // the crater
+      addScar(tb, nW, a * 0.9, '#ff7a2a', true, 150, ms);                 // molten floor, cooling
+    }
+  }
+  const VESC = Math.sqrt(2 * 1.5); // debris: surface gravity 1.5 radii/s² in display time
+  function impactShow(tb, nW, N, mini) {
+    const sev = mini ? N.sev * 0.5 : N.sev, grp = new THREE.Group(); scene.add(grp);
+    const sh = { tb, grp, n: nW.clone(), t: 0, kind: N.kind, sev, global: N.global && !mini };
+    const sprite = () => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: null, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, transparent: true })); sp.renderOrder = 20; grp.add(sp); return sp; };
+    sh.flash = sprite(); sh.flash.material.map = IMP_FLASH;
+    sh.plumes = Array.from({ length: mini ? 2 : 4 }, () => { const sp = sprite(); sp.material.map = IMP_FIRE; return sp; });
+    sh.ring = new THREE.Mesh(shellGeo, shellMat({ n: nW, color: N.kind === 'star' ? '#fff0c0' : '#ffd9a0', ang: 0, mode: 1, add: true, w: 0.04 + 0.05 * sev }));
+    sh.ring.scale.setScalar(1.025); sh.ring.renderOrder = 19; grp.add(sh.ring);
+    sh.ringMax = sh.global ? Math.PI : Math.min(Math.PI, 0.25 + 1.4 * sev);
+    if (N.kind === 'rock') {
+      const cnt = Math.round((mini ? 40 : 80 + 520 * sev) * (TOUCH.matches ? 0.4 : 1));
+      const pos = new Float32Array(cnt * 3), vel = new Float32Array(cnt * 3), col = new Float32Array(cnt * 3);
+      const t1 = new THREE.Vector3().crossVectors(nW, Math.abs(nW.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0)).normalize(), t2 = new THREE.Vector3().crossVectors(nW, t1);
+      const cone = sh.global ? 1.3 : 0.75, vmax = 0.6 + 1.1 * sev, d = new THREE.Vector3();
+      for (let k = 0; k < cnt; k++) {
+        const ph = Math.random() * Math.PI * 2, th = Math.random() ** 0.7 * cone, sp = VESC * (0.25 + Math.random() ** 1.6 * vmax), m = Math.random();
+        d.copy(nW).multiplyScalar(Math.cos(th)).addScaledVector(t1, Math.sin(th) * Math.cos(ph)).addScaledVector(t2, Math.sin(th) * Math.sin(ph));
+        pos.set([nW.x * 1.01, nW.y * 1.01, nW.z * 1.01], 3 * k); vel.set([d.x * sp, d.y * sp, d.z * sp], 3 * k);
+        col.set([1 - 0.4 * m, 0.6 - 0.05 * m, 0.25 + 0.25 * m], 3 * k);
+      }
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      sh.debris = new THREE.Points(geo, new THREE.PointsMaterial({ size: TOUCH.matches ? 3 : 2.5, sizeAttenuation: false, vertexColors: true, transparent: true, depthWrite: false }));
+      sh.debris.frustumCulled = false; sh.vel = vel; grp.add(sh.debris);
+    }
+    IMP.shows.push(sh);
+  }
+  function disposeShow(sh) {
+    scene.remove(sh.grp);
+    sh.grp.traverse(o => { if (o.material) o.material.dispose(); if (o.geometry && o.geometry !== shellGeo) o.geometry.dispose(); });
+  }
+  const impV = new THREE.Vector3(), impP1 = new THREE.Vector3(), impP2 = new THREE.Vector3();
+  function impactDraw(dt) {
+    // The string of pieces on the way in (after a pass inside the Roche limit).
+    const s = IMP.slow;
+    if (s && s.phase === 'in' && s.frag && s.D != null) {
+      const tb = fictBody(F.ids[s.i]), ib = fictBody(F.ids[s.j]);
+      if (!s.frag.meshes) {
+        s.frag.meshes = Array.from({ length: 9 }, () => { const m = new THREE.Mesh(sphereGeo, new THREE.MeshLambertMaterial({ color: ib.color })); scene.add(m); return m; });
+        s.frag.p1 = new THREE.Vector3().crossVectors(s.dirW, new THREE.Vector3(0, 1, 0)).normalize(); s.frag.p2 = new THREE.Vector3().crossVectors(s.dirW, s.frag.p1);
+      }
+      (ib === rogue ? rogue.root : ib.isMoon ? ib.m.holder : ib.root).visible = false;
+      if (s.prevD != null && dt > 0) s.vD = (s.prevD - s.D) / dt;
+      s.prevD = s.D; s.frag.spread = (s.frag.Dent - s.D) * 0.1 + s.Ri * 0.3;
+      s.frag.meshes.forEach((m, k) => {
+        m.position.copy(tb.root.position).addScaledVector(s.dirW, s.D + s.frag.spread * k)
+          .addScaledVector(s.frag.p1, s.Ri * 0.35 * Math.sin(k * 2.1)).addScaledVector(s.frag.p2, s.Ri * 0.35 * Math.cos(k * 1.7));
+        m.scale.setScalar(s.Ri * (0.5 - 0.03 * k));
+      });
+    }
+    // The rest of the string after the lead piece hit: each piece hits in turn (the target turns in between).
+    for (const fr of IMP.falling.slice()) {
+      fr.D -= fr.v * dt;
+      const Rt = fictSceneR(fr.tb);
+      for (const p of fr.pieces.slice()) {
+        const dist = fr.D + fr.spread * p.k, size = fr.Ri * (0.5 - 0.03 * p.k);
+        if (dist <= Rt + size) {
+          scene.remove(p.mesh); p.mesh.material.dispose(); fr.pieces.splice(fr.pieces.indexOf(p), 1);
+          impactShow(fr.tb, fr.nW, fr.N, true); impactScars(fr.tb, fr.nW, fr.N, simMs, true);
+        } else p.mesh.position.copy(fr.tb.root.position).addScaledVector(fr.nW, dist).addScaledVector(fr.p1, fr.Ri * 0.35 * Math.sin(p.k * 2.1)).addScaledVector(fr.p2, fr.Ri * 0.35 * Math.cos(p.k * 1.7));
+      }
+      if (!fr.pieces.length) IMP.falling.splice(IMP.falling.indexOf(fr), 1);
+    }
+    for (const sc of IMP.scars) {
+      const age = (simMs - sc.ms) / 86400000;
+      sc.mesh.visible = age >= -1e-6;
+      if (sc.mesh.visible) sc.mesh.material.userData.u.uAlpha.value = sc.alpha * (isFinite(sc.tau) ? Math.exp(-Math.max(0, age) / sc.tau) : 1);
+    }
+    for (const sh of IMP.shows.slice()) {
+      const t = sh.t += dt, sev = sh.sev, n = sh.n;
+      if (t > 7.5 || sh.tb.gone) { disposeShow(sh); IMP.shows.splice(IMP.shows.indexOf(sh), 1); continue; }
+      sh.grp.position.copy(sh.tb.root.position); sh.grp.scale.setScalar(fictSceneR(sh.tb));
+      // Sprites ignore depth (so they aren't cut by the sphere), so they fade out when the spot turns away from the camera.
+      const face = THREE.MathUtils.smoothstep(n.dot(impV.copy(camera.position).sub(sh.grp.position).normalize()), -0.35, 0.15);
+      const S = 0.5 + 2.5 * sev;
+      sh.flash.position.copy(n).multiplyScalar(1.02);
+      sh.flash.scale.setScalar(S * (0.3 + 0.7 * (1 - Math.exp(-t * 10))));
+      sh.flash.material.opacity = Math.exp(-t * 1.8) * face;
+      sh.plumes.forEach((sp, k) => {
+        const f = (k + 1) / sh.plumes.length, tau = Math.min(1, t / 2.6);
+        const h = sh.kind === 'gas' ? (0.15 + 0.35 * sev) * 4 * tau * (1 - tau) * (0.6 + 0.4 * f) : (0.12 + 0.5 * sev) * (1 - Math.exp(-t * 1.5)) * (0.35 + 0.65 * f);
+        sp.position.copy(n).multiplyScalar(1 + h);
+        sp.scale.setScalar((0.25 + 0.8 * sev) * (0.4 + 0.5 * Math.min(t, 2)) * (1.2 - 0.4 * f));
+        sp.material.opacity = Math.max(0, 1 - t / (sh.kind === 'gas' ? 3.2 : 4.2)) * face * 0.85;
+        sp.material.color.setRGB(1, 0.95 - 0.45 * tau, 0.8 - 0.6 * tau);
+      });
+      const u = sh.ring.material.userData.u;
+      u.uAng.value = sh.ringMax * Math.min(1, t / 2.8) ** 0.6; u.uAlpha.value = Math.max(0, 1 - t / 3.2) * (sh.kind === 'gas' ? 0.6 : 1);
+      if (sh.debris) {
+        const p = sh.debris.geometry.attributes.position, a = p.array, v = sh.vel, step = Math.min(dt, 0.05);
+        for (let k = 0; k < a.length; k += 3) {
+          const r2 = a[k] * a[k] + a[k + 1] * a[k + 1] + a[k + 2] * a[k + 2];
+          if (r2 < 0.98) continue; // landed (left inside, hidden by the body)
+          const r = Math.sqrt(r2), g = -1.5 / (r2 * r) * step;
+          v[k] += a[k] * g; v[k + 1] += a[k + 1] * g; v[k + 2] += a[k + 2] * g;
+          a[k] += v[k] * step; a[k + 1] += v[k + 1] * step; a[k + 2] += v[k + 2] * step;
+          if (a[k] * a[k] + a[k + 1] * a[k + 1] + a[k + 2] * a[k + 2] < 1) { a[k] *= 0.5; a[k + 1] *= 0.5; a[k + 2] *= 0.5; }
+        }
+        p.needsUpdate = true; sh.debris.material.opacity = Math.max(0, 1 - t / 7);
+      }
+    }
+  }
+  function impactClear() {
+    impactEndSlow(); IMP.shows.forEach(disposeShow); IMP.falling.forEach(fr => fr.pieces.forEach(p => scene.remove(p.mesh)));
+    for (const sc of IMP.scars) { sc.mesh.parent?.remove(sc.mesh); sc.mesh.material.dispose(); }
+    Object.assign(IMP, { pending: [], list: [], shows: [], scars: [], falling: [], snap: null, cardIdx: -1 }); IMP.ignore.clear();
+    $('impCard').hidden = true; impactCam = null;
+  }
+  $('impClose').addEventListener('click', () => { $('impCard').hidden = true; });
+  $('impReplay').addEventListener('click', () => {
+    const rec = IMP.list[IMP.cardIdx]; if (!rec?.snap || !fict.on) return;
+    fictRestore(rec.snap); $('impCard').hidden = true;
+    paused = false; dir = 1; renderSpeed(); update(simMs); renderFict(true);
+  });
+  $('fEvents').addEventListener('click', e => { const b = e.target.closest('[data-imp]'); if (b) showImpactCard(+b.dataset.imp); });
   // ----- switching fiction mode on and off -----
   function setFiction(on) {
     if (on === fict.on) { if (on) toggleFictPop(true); return; }
@@ -2277,17 +3094,19 @@
       if (skyOn) setSky(false);
       if (explain) setExplain(false);
       if (!$('eclPop').hidden) toggleEcl(false);
+      if (!$('cometPop').hidden) toggleComets(false);
+      if (byId[focusId]?.isComet) $('overview').click(); // comets aren't part of the simulation
       fict.on = true; fictBuild();
       paused = true; speedIdx = 6; renderSpeed();
     } else {
-      fict.on = false;
+      impactClear(); fict.on = false; impactSlowLbl = false;
       for (const t of trailGrp.children.slice()) { t.geometry.dispose(); trailGrp.remove(t); }
       rogue.root.visible = false; rogue.lbl.hidden = true;
       for (const b of Object.values(byId)) { b.gone = false; if (!b.isMoon) b.root.visible = true; else b.m.holder.visible = true; }
       simMs = Math.min(MAX_MS, Math.max(MIN_MS, simMs));
       applyOrbits();
     }
-    for (const id of ['eclBtn', 'galBtnOpen', 'now']) $(id).disabled = on;
+    for (const id of ['eclBtn', 'galBtnOpen', 'now', 'cometBtn']) $(id).disabled = on;
     ghosts.visible = on;
     for (const c of orbitGroup.children) c.traverse(o => { if (o.material) { o.material.userData.op ??= o.material.opacity; o.material.opacity = o.material.userData.op * (on ? 0.35 : 1); } });
     $('fictBtn').setAttribute('aria-pressed', String(on));
@@ -2449,7 +3268,7 @@
     $('fLag').textContent = F.lag && !paused ? 'The simulation can\'t keep up at this speed, so time is running a little slower.' : '';
     if (fictEventsDirty) {
       fictEventsDirty = false;
-      $('fEvents').innerHTML = F.events.length ? F.events.map(ev => `<li><time>${new Date(ev.ms).toISOString().slice(0, 10)}</time>${ev.text}</li>`).join('') : '<li>Nothing yet. Pick a scenario or change a body, then press Play.</li>';
+      $('fEvents').innerHTML = F.events.length ? F.events.map(ev => `<li><span><time>${new Date(ev.ms).toISOString().slice(0, 10)}</time>${ev.text}${ev.imp != null && IMP.list[ev.imp] ? `<button class="evlink" data-imp="${ev.imp}">Details</button>` : ''}</span></li>`).join('') : '<li>Nothing yet. Pick a scenario or change a body, then press Play.</li>';
       fictSyncEditor();
     }
     const rows = [], quiet = [];
@@ -2499,7 +3318,7 @@
   new ResizeObserver(() => document.documentElement.style.setProperty('--ctrl-h', ctrlEl.offsetHeight + 'px')).observe(ctrlEl);
   // Phones: the bar keeps speed, Play, Now and More; the other buttons move into the More sheet. They're the same
   // elements, so their listeners and pressed states keep working, and they move back if the screen gets wider.
-  const homes = ['rev', 'eclBtn', 'galBtnOpen', 'fictBtn', 'mComp', 'mTrue', 'tOrb', 'tLbl'].map(id => ({ el: $(id), parent: $(id).parentNode, next: $(id).nextSibling }));
+  const homes = ['rev', 'eclBtn', 'cometBtn', 'galBtnOpen', 'fictBtn', 'mComp', 'mTrue', 'tOrb', 'tLbl'].map(id => ({ el: $(id), parent: $(id).parentNode, next: $(id).nextSibling }));
   function toggleMore(open) { $('morePop').hidden = !open; $('moreBtn').setAttribute('aria-expanded', String(open)); }
   function layoutBar() {
     if (PHONE.matches) for (const h of homes) $('moreGrid').appendChild(h.el);
@@ -2518,6 +3337,8 @@
     ['fictPop', el => !el.hidden, () => toggleFictPop(false)],
     ['orbPop', el => !el.hidden, () => toggleOrb(false)],
     ['morePop', el => !el.hidden, () => toggleMore(false)],
+    ['impCard', el => !el.hidden, () => { $('impCard').hidden = true; }],
+    ['cometPop', el => !el.hidden, () => toggleComets(false)],
   ];
   const sheetShown = new Map(SHEETS.map(([id, vis]) => [id, vis($(id))]));
   const sheetObs = new MutationObserver(() => {
@@ -2566,6 +3387,26 @@
         if (on) m.lbl.style.transform = `translate(${((tmp.x + 1) / 2 * w).toFixed(1)}px, ${((1 - tmp.y) / 2 * h).toFixed(1)}px) translate(-50%, -140%)`;
       }
     }
+    // Shoemaker–Levy 9: the name on the leading piece; piece letters once they're far enough apart on screen.
+    const fragLbl = (el, pos, cls) => {
+      tmp.copy(pos).project(camera);
+      const on = tmp.z < 1 && Math.abs(tmp.x) < 1.05 && Math.abs(tmp.y) < 1.05;
+      if (on) el.style.transform = `translate(${((tmp.x + 1) / 2 * w).toFixed(1)}px, ${((1 - tmp.y) / 2 * h).toFixed(1)}px) translate(-50%, ${cls})`;
+      return on ? [(tmp.x + 1) / 2 * w, (1 - tmp.y) / 2 * h] : null;
+    };
+    sl9.lbl.hidden = !sl9.lead || !fragLbl(sl9.lbl, sl9.lead.pos, '-160%');
+    const shown = [];
+    for (const fr of sl9.frags) {
+      const xy = fr.pos && sl9.alive > 1 ? fragLbl(fr.lbl, fr.pos, '40%') : null;
+      fr.lbl.hidden = !xy || shown.some(([x, y]) => Math.hypot(x - xy[0], y - xy[1]) < 22);
+      if (!fr.lbl.hidden) shown.push(xy);
+    }
+    for (const c of COMETS) {
+      tmp.copy(c.root.position).project(camera);
+      const on = !c.gone && (focusId === c.id || c.st?.r < 60) && tmp.z < 1 // far-off visitors: no label unless followed && Math.abs(tmp.x) < 1.05 && Math.abs(tmp.y) < 1.05;
+      c.lbl.hidden = !on;
+      if (on) c.lbl.style.transform = `translate(${((tmp.x + 1) / 2 * w).toFixed(1)}px, ${((1 - tmp.y) / 2 * h).toFixed(1)}px) translate(-50%, -140%)`;
+    }
     for (const a of galAnchors) {
       a.obj.getWorldPosition(tmp).project(camera);
       const on = galGrp.visible && tmp.z < 1 && Math.abs(tmp.x) < 1 && Math.abs(tmp.y) < 1;
@@ -2595,18 +3436,22 @@
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
     if (!paused && fict.on) {
       // The simulation may fall behind at high speeds; the clock follows how far it actually got.
-      simMs += fictAdvance(dt * SPEEDS[speedIdx].v * dir / 86400) * 86400000;
+      // Slow motion around impacts caps how far a frame goes (impactCap).
+      simMs += fictAdvance(impactCap(dt * SPEEDS[speedIdx].v * dir / 86400, dt)) * 86400000;
       if (simMs < FICT_MIN || simMs > FICT_MAX) { simMs = Math.min(FICT_MAX, Math.max(FICT_MIN, simMs)); paused = true; renderSpeed(); }
     } else if (!paused) {
       simMs += dt * 1000 * SPEEDS[speedIdx].v * dir;
       if (simMs < MIN_MS || simMs > MAX_MS) { simMs = Math.min(MAX_MS, Math.max(MIN_MS, simMs)); paused = true; renderSpeed(); }
     }
+    if (fict.on) impactSim();
     update(simMs); tintMoon(); if (galOn) updateTrails();
     updateCamera(now);
     controls.update();
+    if (fict.on || IMP.shows.length) impactDraw(dt); // What if… impacts, and Shoemaker–Levy 9's real ones
+    if (fict.on && !!IMP.slow?.capping !== impactSlowLbl) { impactSlowLbl = !!IMP.slow?.capping; renderSpeed(); }
     if (skyOn) { updateSky(); renderer.render(skyScene, skyCam); }
     else { renderer.render(scene, camera); placeLabels(); }
-    if (now - lastUi > 200) { lastUi = now; renderClock(); renderRows(); renderDetail(); renderEclipses(); renderWhy(); renderFict(); }
+    if (now - lastUi > 200) { lastUi = now; renderClock(); renderRows(); renderDetail(); renderEclipses(); renderWhy(); renderFict(); renderComets(); }
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
