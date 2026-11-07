@@ -214,7 +214,8 @@
      --ctrl-h is the control bar's measured height (set from script), so sheets always sit just above it.
      "Phone" = narrower than 760 px, or a touch screen under 500 px tall (a phone on its side). */
   :root { --ctrl-h: 64px; --st: env(safe-area-inset-top, 0px); --sb: env(safe-area-inset-bottom, 0px); }
-  #moreBtn, #morePop[hidden] { display: none; }
+  #moreBtn, #morePop[hidden], #fictHide, #fictChip, #galHide, #galChip { display: none; }
+  #fictChip, #galChip { position: absolute; top: calc(64px + var(--st)); right: 8px; z-index: 5; }
   #morePop {
     position: absolute; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding-block: 12px;
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: grid; gap: 10px; z-index: 6;
@@ -228,7 +229,7 @@
     }
     .ctrl .grp { gap: 4px; flex: 1; justify-content: space-between; }
     #speedLbl { min-width: 0; flex: 0 1 110px; font-size: 12px; }
-    #moreBtn { display: inline-block; }
+    #moreBtn, #fictHide, #fictChip:not([hidden]), #galHide, #galChip:not([hidden]) { display: inline-block; }
     .ctrl .grp.empty { display: none; }
     .sep { display: none; }
     #panel, #eclPop, #galPop, #orbPop, #fictPop, #morePop, #skyCard {
@@ -249,6 +250,7 @@
     input[type=range] { min-height: 32px; }
     tbody td { padding-block: 10px; }
     .elist button { padding-block: 11px; }
+    #fictHide, #fictChip:not([hidden]), #galHide, #galChip:not([hidden]) { display: inline-block; }
   }
   /* Touch tablets: popovers and the side panel share the width instead of overlapping. */
   @media (pointer: coarse) and (min-width: 761px) and (min-height: 501px) {
@@ -330,8 +332,10 @@
     <div class="moreGrid" id="moreGrid"></div>
   </section>
 
+  <button id="fictChip" hidden aria-controls="fictPop">What if… ▴</button>
+  <button id="galChip" hidden aria-controls="galPop">Galaxy ▴</button>
   <section id="fictPop" hidden aria-label="What if: change the Solar System">
-    <div class="ph"><span class="eyebrow">What if… · fiction mode</span><button id="fictClose">Back to reality</button></div>
+    <div class="ph"><span class="eyebrow">What if… · fiction mode</span><span class="btns"><button id="fictHide" title="Hide this panel; the simulation keeps running">Hide</button><button id="fictClose">Back to reality</button></span></div>
     <div class="fsec">
       <p>Every body now pulls on every other, starting from where they really are. Change something, then press <b>Play</b>: the change spreads through the whole system. <span id="fLag" class="warn"></span></p>
       <h3>Try one</h3>
@@ -380,7 +384,7 @@
   </section>
 
   <section id="galPop" hidden aria-label="Galaxy view">
-    <div class="ph"><span class="eyebrow">Galaxy view</span><button id="galClose">Exit</button></div>
+    <div class="ph"><span class="eyebrow">Galaxy view</span><span class="btns"><button id="galHide" title="Hide this card; the galaxy view stays on">Hide</button><button id="galClose">Exit</button></span></div>
     <div class="gal">
       <p>We're flying round the Milky Way at <b>about 246 km/s</b>. The dust streaming past shows the motion, and each fading line is a planet's real <b>spiral</b> path through space.</p>
       <div class="seg" id="galSpeed" role="group" aria-label="Galactic drift scale">
@@ -1863,7 +1867,7 @@
       galD0 = state.d;
     }
     galOn = on; galGrp.visible = on;
-    $('galPop').hidden = !on;
+    toggleGalCard(on);
     $('galBtnOpen').setAttribute('aria-pressed', String(on)); $('galBtnOpen').setAttribute('aria-expanded', String(on));
     if (on) { updateTrails(); select('sun'); return; }
     ({ speedIdx, paused, dir } = galPrev); renderSpeed();
@@ -1877,6 +1881,10 @@
   });
   $('galBtnOpen').addEventListener('click', () => setGalaxy(!galOn));
   $('galClose').addEventListener('click', () => setGalaxy(false));
+  // Phones and tablets: hide the card to see the view; the Galaxy ▴ button brings it back.
+  function toggleGalCard(open) { $('galPop').hidden = !open; $('galChip').hidden = open || !galOn; }
+  $('galHide').addEventListener('click', () => toggleGalCard(false));
+  $('galChip').addEventListener('click', () => toggleGalCard(true));
 
   // Facts and a schematic top-down map (viewed from galactic north: the galaxy turns clockwise; the Sun sits below
   // the centre, moving left). Arms are log spirals with a 12° pitch that trail the rotation.
@@ -2286,9 +2294,12 @@
   function toggleFictPop(open) {
     if (open && !$('orbPop').hidden) toggleOrb(false);
     $('fictPop').hidden = !open; $('fictBtn').setAttribute('aria-expanded', String(open));
+    $('fictChip').hidden = open || !fict.on; // phones and tablets: the way back to the panel while it's hidden
   }
   $('fictBtn').addEventListener('click', () => fict.on ? toggleFictPop($('fictPop').hidden) : setFiction(true));
   $('fictClose').addEventListener('click', () => setFiction(false));
+  $('fictHide').addEventListener('click', () => toggleFictPop(false));
+  $('fictChip').addEventListener('click', () => toggleFictPop(true));
   // ----- editing -----
   const fSelIdx = () => F.ids.indexOf($('fSel').value);
   // Move body i and everything bound to it (its moons) by dx, and change their velocities by dv.
@@ -2365,6 +2376,7 @@
     fictBuild(); apply(); fictRefresh(); fictEvent(text);
     speedIdx = speed; paused = false; renderSpeed(); fictSyncEditor(); update(simMs);
     if (focus) select(focus); // close-up for the Earth–Moon scenarios
+    if (PHONE.matches) toggleFictPop(false); // phones: get the panel out of the way so the scenario can be seen
   });
   // Drag a planet in the 3D view (in the horizontal plane through it). Its moons come along, and its velocity turns and
   // scales so its orbit keeps the same shape at the new distance.
@@ -2499,7 +2511,7 @@
   const SHEETS = [
     ['panel', el => el.classList.contains('open'), () => setPanel(false)],
     ['eclPop', el => !el.hidden, () => toggleEcl(false)],
-    ['galPop', el => !el.hidden, () => setGalaxy(false)],
+    ['galPop', el => !el.hidden, () => toggleGalCard(false)], // just the card; the galaxy view stays on
     ['fictPop', el => !el.hidden, () => toggleFictPop(false)],
     ['orbPop', el => !el.hidden, () => toggleOrb(false)],
     ['morePop', el => !el.hidden, () => toggleMore(false)],
