@@ -470,6 +470,16 @@
   </div>
 </div>
 
+<script>
+// Cloudflare Web Analytics: visit counts for the owner's dashboard only; nothing is shown on the page and no cookies
+// are set. Loaded only on the published GitHub Pages site, so local testing and other copies aren't counted.
+if (location.hostname === 'kallolbose.github.io') {
+  const s = document.createElement('script');
+  s.type = 'module'; s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  s.setAttribute('data-cf-beacon', '{"token": "14770b670d204430ae212bf9aa42ed1d"}');
+  document.head.appendChild(s);
+}
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
@@ -1297,9 +1307,8 @@
   const orbitGroup = new THREE.Group(); scene.add(orbitGroup);
   let moonRing;
   // Orbits picked off in the Orbits menu: body ids, plus '<planetId>:moons' for a planet's moon-system rings.
-  // Remembered per viewer; the page works the same if storage is unavailable.
-  const ORB_KEY = 'kbosmos.orbitsOff';
-  const orbOff = new Set((() => { try { return JSON.parse(localStorage.getItem(ORB_KEY)) || []; } catch { return []; } })());
+  // Every page load starts with only Earth's and the Moon's orbits on (filled in once the menu exists, below).
+  const orbOff = new Set();
   const orbShown = id => !orbOff.has(id);
   function buildOrbits(T) {
     orbitGroup.clear();
@@ -1694,12 +1703,11 @@
     (moonSystems[b.id] ? `<label class="sub"><input type="checkbox" data-id="${b.id}:moons">moons</label>` : '') + '</li>').join('') +
     '<li><label><input type="checkbox" data-id="comets"><i style="background:#bfe3ff"></i>Comets</label></li>';
   const orbInputs = [...$('orbList').querySelectorAll('input')];
+  for (const { dataset: { id } } of orbInputs) if (id !== 'earth' && id !== 'moon') orbOff.add(id);
   function applyOrbits() {
     for (const c of orbitGroup.children) c.visible = orbShown(c.userData.id);
     for (const i of orbInputs) i.checked = orbShown(i.dataset.id);
-    $('tOrb').setAttribute('aria-pressed', String(orbInputs.some(i => i.checked)));
-    try { localStorage.setItem(ORB_KEY, JSON.stringify([...orbOff])); } catch {}
-  }
+    $('tOrb').setAttribute('aria-pressed', String(orbInputs.some(i => i.checked)));  }
   $('orbList').addEventListener('change', e => {
     const id = e.target.dataset.id;
     if (e.target.checked) orbOff.delete(id); else orbOff.add(id);
